@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import "C:/Users/USER/Desktop/online_enrollment-master/src/css/style.css";
+import "../css/style.css";
 import Logo from "../img/IUSlogo2.png";
 import Cookie from "js-cookie";
 import axios from "axios";
@@ -100,23 +100,23 @@ export default class Navigation extends Component {
         </div>
         <div className="upButtons">
           <div className="links">
-            <Link id="home" href="index.html">
+            <Link id="home" to="/Home">
               <span data-hover="Home">Home</span>
             </Link>
-            <Link id="MyCourses" href="myCourses.html">
+            <Link id="MyCourses" to="/UserCourses">
               <span data-hover="MyCourses">My courses</span>
             </Link>
             <Link id="AddCourses" to="/Courses">
               <span data-hover="AddCourses">Add courses</span>
             </Link>
-            <Link id="Schedule" href="schedule.html">
+            <Link id="Schedule" to="/Schedule">
               <span data-hover="Schedule">Schedule</span>
             </Link>
           </div>
         </div>
         <div className="downButtons">
           <div className="links">
-            <Link id="LogOut" href="#">
+            <Link id="LogOut" to="/Login">
               <span data-hover="LogOut">Log Out</span>
             </Link>
           </div>

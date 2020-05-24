@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "C:/Users/USER/Desktop/online_enrollment-master/src/css/style.css";
+import "../css/style.css";
 import Cookie from "js-cookie";
 
 /*const tableStyle = {

@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Card } from "react-bootstrap";
 import Cookie from "js-cookie";
-import "C:/Users/USER/Desktop/online_enrollment-master/src/css/style.css";
-import "C:/Users/USER/Desktop/online_enrollment-master/src/css/main.css";
-import "C:/Users/USER/Desktop/online_enrollment-master/src/css/util.css";
+import "../css/style.css";
+import "../css/main.css";
+import "../css/util.css";
 
 export default class CreateUser extends Component {
   constructor(props) {
