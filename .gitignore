@@ -1,2 +1,10 @@
+<<<<<<< HEAD
 
+=======
+ node_modules/
+ .idea/
+ backend/
+ build/
+ .env/
+>>>>>>> master
 backend/.env

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import Logo from "../img/IUSlogo2.png";
 import Cookie from "js-cookie";
 import "../css/style.css";
 import "../css/main.css";
@@ -86,7 +87,7 @@ export default class CreateUser extends Component {
           <div className="wrap-login100">
             <form className="login100-form validate-form">
               <span className="login100-form-logo">
-                <img className="img" src="img/IUSlogo2.png" />
+                <img className="img" src={Logo} />
               </span>
 
               <span className="login100-form-title p-b-34 p-t-27">Log in</span>
@@ -140,9 +141,9 @@ export default class CreateUser extends Component {
               </div>
 
               <div className="text-center p-t-90">
-                <a className="txt1" href="register.html">
+                <Link className="txt1" to="/Home">
                   Don't have an account!? Register!
-                </a>
+                </Link>
               </div>
             </form>
           </div>
