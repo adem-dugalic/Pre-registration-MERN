@@ -24,17 +24,17 @@ router.route('/').get(auth,(req,res)=> {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-router.route('/signup').post((req, res) => {
+router.route('/userImport').post((req, res) => {
 
     const user = new User({
+        userID: req.body.userID,
         name: req.body.name,
         surname: req.body.surname,
-        email: req.body.email,
         faculty: req.body.faculty,
-        password: req.body.password
+        program: req.body.program,
+        semester: req.body.semester,
+        email: req.body.email,
     });
-
-    user.password = user.generateHash(req.body.password);
 
     user.save().then(
         () => {
@@ -51,15 +51,52 @@ router.route('/signup').post((req, res) => {
     );
 });
 
+router.route('/signup').post((req, res) => {
+ 
+    User.findOne({userID: req.body.userID}).then((user) => {
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found!',
+                error: new Error('User not found!')
+            });
+        }
+        else if (user.password){
+            return res.status(405).json({
+                message: 'That user has alreday signed up!',
+                error: new Error('That user has already signed up!')
+            });
+        }
+        else{
+            user.password = user.generateHash(req.body.password);
+
+            user.save().then(
+                () => {
+                    res.status(201).json({
+                        message: 'You have registered successfully!'
+                    });
+                }
+            ).catch(
+                (error) => {
+                    res.status(500).json({
+                        error: error
+                    });
+                }
+            );
+        }
+    })
+
+   
+});
+
 router.route('/login').post((req, res) => {
 
-    User.findOne({ email: req.body.email }).then(
+    User.findOne({ userID: req.body.userID }).then(
         (user) => {
-            if (!user) {
+           if (!user) {
                 return res.status(401).json({
                     error: new Error('User not found!')
                 });
-            }
+             }
 
             if(user.validPassword(req.body.password))
             {
@@ -71,11 +108,22 @@ router.route('/login').post((req, res) => {
                 UserSession.replaceOne({userId: user._id},{userId: user._id, token: token},{ upsert: true })
                     .then((session) => {
                         //console.log("replaceOne worked " + session);
-                        res.status(200).json({
-                            userId: user._id,
-                            token: token,
-                            expiresIn: 1
-                        });
+                        if(user.isAdmin){
+                            res.status(200).json({
+                                userId: user._id,
+                                token: token,
+                                expiresIn: 1,
+                                isAdmin: true 
+                            });
+                        }
+                        else{
+                            res.status(200).json({
+                                userId: user._id,
+                                token: token,
+                                expiresIn: 1,
+                                isAdmin: false
+                            });
+                        }
                     })
                     .catch((err) => {
                         res.status(401).json('Error replaceOne: ' + err);
@@ -85,6 +133,7 @@ router.route('/login').post((req, res) => {
             else
             {
                 return res.status(401).json({
+                    message:'Incorrect password',
                     error: new Error('Incorrect password!')
                 });
             }
@@ -128,7 +177,15 @@ router.route('/setUserCourses').post(auth,(req,res)=> {
         .catch((err) => res.status(401).json('Error: ' + err));
 });
 
-
+router.route('/delete').delete((req, res) => {
+    User.findOneAndDelete({name:req.body.name})
+    .then(() => {
+        res.status(200).json("Done!");
+    })
+    .catch((err) => {
+        res.status(400).json('Error: ' + err);
+    })
+});
 //TODO: do update / edit / push / delete
 
 /*
