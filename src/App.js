@@ -23,7 +23,7 @@ function App() {
         <Route exact path="/">
           <Route component={Login} />
         </Route>
-        <Route exact path="/Signup">
+        <Route exact path="/SignUp">
           <Route component={SignUp} />
         </Route>
         <div className="wrapper">

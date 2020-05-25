@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
 import "../css/style.css";
 import Logo from "../img/IUSlogo2.png";
 import Cookie from "js-cookie";
@@ -17,63 +18,23 @@ export default class Navigation extends Component {
 
     this.state = {
       isLogin: false,
-      buttons: "",
+      user: "",
     };
   }
 
-  /*async componentDidMount() {
-    /*Check if the user is properly authenticated*/
-  /*6if (!Cookie.get("token")) {
-      this.setState({
-        buttons: (
-          <div>
-            <Button variant="success" style={btnStyle} href="/login">
-              Login
-            </Button>
-            <Button variant="outline-success" style={btnStyle} href="/signup">
-              Sign up
-            </Button>
-          </div>
-        ),
-      });
-      return;
-    }*/
-
-  /*const response = await fetch(
-      "http://localhost:5000/users/auth?token=" +
-        Cookie.get("token") +
-        "&userId=" +
-        Cookie.get("userId")
-    );*/
-
-  /* if (response.status === 200)
-      this.setState({
-        buttons: (
-          <Button variant="success" style={btnStyle} onClick={this.logout}>
-            logout
-          </Button>
-        ),
-      });
-    else {
-      this.setState({
-        buttons: (
-          <div>
-            <Button variant="success" style={btnStyle} href="/login">
-              Login
-            </Button>
-            <Button variant="outline-success" style={btnStyle} href="/signup">
-              Sign up
-            </Button>
-          </div>
-        ),
-      });
-    }
-  }*/
+  async componentDidMount() {
+    const response = await fetch(
+      "http://localhost:5000/users/" + Cookie.get("userID")
+    );
+    this.setState({
+      user: Cookie.get("userID"),
+    });
+  }
 
   logout() {
     axios
       .get(
-        "http://localhost:3000/users/logout?token=" +
+        "http://localhost:5000/users/logout?token=" +
           Cookie.get("token") +
           "&userId=" +
           Cookie.get("userId")
@@ -96,7 +57,10 @@ export default class Navigation extends Component {
       <nav className="navigation">
         <div className="logo">
           <img className="ius" src={Logo} />
-          <span className="user">Adem Dugalić</span>
+          <span
+            className="user"
+            dangerouslySetInnerHTML={{ __html: this.state.user }}
+          ></span>
         </div>
         <div className="upButtons">
           <div className="links">
@@ -116,8 +80,12 @@ export default class Navigation extends Component {
         </div>
         <div className="downButtons">
           <div className="links">
-            <Link id="LogOut" href="#">
-              <span data-hover="LogOut">Log Out</span>
+            <Link id="LogOut" to="/Login">
+              <form>
+                <button onClick={this.logout} data-hover="LogOut">
+                  Log Out
+                </button>
+              </form>
             </Link>
           </div>
         </div>

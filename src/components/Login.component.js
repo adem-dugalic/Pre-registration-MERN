@@ -7,36 +7,24 @@ import "../css/style.css";
 import "../css/main.css";
 import "../css/util.css";
 
-export default class CreateUser extends Component {
+export default class Login extends Component {
   constructor(props) {
     super(props);
 
+    this.onChangeID = this.onChangeID.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
-    this.onChangeEmail = this.onChangeEmail.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.isLogin = this.isLogin.bind(this);
 
     this.state = {
-      email: "",
+      userID: "",
       password: "",
     };
   }
 
-  //Right before anything load the page this is called
-  componentDidMount() {
-    if (this.isLogin()) {
-      //window.location = '/';
-      return;
-    }
-
+  onChangeID(e) {
     this.setState({
-      email: "",
-    });
-  }
-
-  onChangeEmail(e) {
-    this.setState({
-      email: e.target.value,
+      userID: e.target.value,
     });
   }
 
@@ -48,22 +36,19 @@ export default class CreateUser extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-
     const user = {
-      email: this.state.email,
+      userID: this.state.userID,
       password: this.state.password,
     };
 
-    console.log(user);
-
     axios
-      .post("http://localhost:3000/users/login", user)
+      .post("http://localhost:5000/users/login", user)
       .then((res) => {
         console.log(res.data);
         Cookie.set("token", res.data.token);
         Cookie.set("userId", res.data.userId);
         //Return to the user list
-        window.location = "/";
+        window.location = "/Home";
       })
       .catch((err) => {
         Cookie.remove("token");
@@ -85,7 +70,10 @@ export default class CreateUser extends Component {
       <div className="limiter">
         <div className="container-login100">
           <div className="wrap-login100">
-            <form className="login100-form validate-form">
+            <form
+              onSubmit={this.onSubmit}
+              className="login100-form validate-form"
+            >
               <span className="login100-form-logo">
                 <img className="img" src={Logo} />
               </span>
@@ -100,6 +88,7 @@ export default class CreateUser extends Component {
                   className="input100"
                   type="text"
                   name="username"
+                  onChange={this.onChangeID}
                   placeholder="ID"
                 />
                 <span
@@ -116,6 +105,7 @@ export default class CreateUser extends Component {
                   className="input100"
                   type="password"
                   name="pass"
+                  onChange={this.onChangePassword}
                   placeholder="Password"
                 />
                 <span
@@ -131,7 +121,9 @@ export default class CreateUser extends Component {
                   type="checkbox"
                   name="remember-me"
                 />
-                <label className="label-checkbox100" for="ckb1">
+                <label
+                  className="label-checkbox100" //for="ckb1"
+                >
                   Remember me
                 </label>
               </div>
@@ -141,7 +133,7 @@ export default class CreateUser extends Component {
               </div>
 
               <div className="text-center p-t-90">
-                <Link className="txt1" to="/Home">
+                <Link className="txt1" to="/SignUp">
                   Don't have an account!? Register!
                 </Link>
               </div>

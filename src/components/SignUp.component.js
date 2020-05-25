@@ -1,93 +1,160 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Logo from "../img/IUSlogo2.png";
-
+import { Link } from "react-router-dom";
 import "../css/style.css";
 import "../css/main.css";
 import "../css/util.css";
 
-export default class CreateUser extends Component {
+export default class SignUp extends Component {
   constructor(props) {
     super(props);
 
+    this.onChangeID = this.onChangeID.bind(this);
+    this.onChangePassword = this.onChangePassword.bind(this);
+    this.onChangeConfirmPassword = this.onChangeConfirmPassword.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+
     this.state = {
-      ID: "",
-      Password: "",
+      userID: "",
+      password: "",
       ConfirmPassword: "",
     };
   }
 
+  onChangeID(e) {
+    this.setState({
+      userID: e.target.value,
+    });
+  }
+
+  onChangePassword(e) {
+    this.setState({
+      password: e.target.value,
+    });
+  }
+
+  onChangeConfirmPassword(e) {
+    this.setState({
+      ConfirmPassword: e.target.value,
+    });
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    if (this.state.ConfirmPassword !== this.state.password) {
+      alert("Error");
+      window.location = "/signup";
+      return;
+    }
+
+    const newUser = {
+      userID: this.state.userID,
+      password: this.state.password,
+    };
+
+    axios
+      .post("http://localhost:5000/users/signup", newUser)
+      .then((res) => {
+        console.log("Success");
+        window.location = "/";
+      })
+      .catch((err) => alert("Error: " + err));
+
+    window.location = "/";
+  }
+
   render() {
     return (
-      <div class="limiter">
-        <div class="container-login100">
-          <div class="wrap-login100">
-            <form class="login100-form validate-form">
-              <span class="login100-form-logo">
+      <div className="limiter">
+        <div className="container-login100">
+          <div className="wrap-login100">
+            <form
+              onSubmit={this.onSubmit}
+              className="login100-form validate-form"
+            >
+              <span className="login100-form-logo">
                 <img className="img" src={Logo} />
               </span>
 
-              <span class="login100-form-title p-b-34 p-t-27">Register</span>
+              <span className="login100-form-title p-b-34 p-t-27">
+                Register
+              </span>
 
               <div
-                class="wrap-input100 validate-input"
+                className="wrap-input100 validate-input"
                 data-validate="Enter ID"
               >
                 <input
-                  class="input100"
+                  className="input100"
                   type="text"
                   name="username"
+                  onChange={this.onChangeID}
                   placeholder="ID"
                 />
-                <span class="focus-input100" data-placeholder="&#xf207;"></span>
+                <span
+                  className="focus-input100"
+                  data-placeholder="&#xf207;"
+                ></span>
               </div>
 
               <div
-                class="wrap-input100 validate-input"
+                className="wrap-input100 validate-input"
                 data-validate="Enter password"
               >
                 <input
-                  class="input100"
+                  className="input100"
                   type="password"
                   name="pass"
+                  onChange={this.onChangePassword}
                   placeholder="Password"
                 />
-                <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                <span
+                  className="focus-input100"
+                  data-placeholder="&#xf191;"
+                ></span>
               </div>
 
               <div
-                class="wrap-input100 validate-input"
+                className="wrap-input100 validate-input"
                 data-validate="Confirm password"
               >
                 <input
-                  class="input100"
+                  className="input100"
                   type="password"
                   name="pass"
+                  onChange={this.onChangeConfirmPassword}
                   placeholder="Confirm password"
                 />
-                <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                <span
+                  className="focus-input100"
+                  data-placeholder="&#xf191;"
+                ></span>
               </div>
 
-              <div class="contact100-form-checkbox">
+              <div className="contact100-form-checkbox">
                 <input
-                  class="input-checkbox100"
+                  className="input-checkbox100"
                   id="ckb1"
                   type="checkbox"
                   name="remember-me"
                 />
-                <label class="label-checkbox100" for="ckb1">
+                <label
+                  className="label-checkbox100" //for="ckb1"
+                >
                   Remember me
                 </label>
               </div>
 
-              <div class="container-login100-form-btn">
-                <button class="login100-form-btn">Login</button>
+              <div className="container-login100-form-btn">
+                <button className="login100-form-btn">Signup</button>
               </div>
 
-              <div class="text-center p-t-90">
-                <a class="txt1" href="index.html">
+              <div className="text-center p-t-90">
+                <Link className="txt1" to="/">
                   Have an account!? Log in now!
-                </a>
+                </Link>
               </div>
             </form>
           </div>
