@@ -3,3 +3,4 @@
  backend/
  build/
  .env/
+backend/.env
