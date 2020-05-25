@@ -10,6 +10,12 @@ import UserCourses from "./components/UserCourses.component";
 import Home from "./components/Home.component";
 import Schedule from "./components/Schedule.component";
 
+import AdminHome from "./components/AdminHome.component";
+import AdminCourses from "./components/AdminCourses.component";
+import AdminStudents from "./components/AdminStudents.component";
+import AdminStatistics from "./components/AdminStatistics.component";
+import AdminNavigation from "./components/AdminNavigation.component";
+
 function App() {
   return (
     <div className="outerWrapper">
@@ -36,6 +42,23 @@ function App() {
           <Route exact path="/Schedule">
             <Navigation />
             <Route component={Schedule} />
+          </Route>
+
+          <Route exact path="/AdminHome">
+            <AdminNavigation />
+            <AdminHome />
+          </Route>
+          <Route exact path="/AdminCourses">
+            <AdminNavigation />
+            <AdminCourses />
+          </Route>
+          <Route exact path="/AdminStudents">
+            <AdminNavigation />
+            <AdminStudents />
+          </Route>
+          <Route exact path="/AdminStatistics">
+            <AdminNavigation />
+            <AdminStatistics />
           </Route>
         </div>
       </Switch>

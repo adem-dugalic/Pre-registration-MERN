@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Card } from "react-bootstrap";
+import Logo from "../img/IUSlogo2.png";
 
 import "../css/style.css";
 import "../css/main.css";
@@ -18,7 +18,7 @@ export default class CreateUser extends Component {
           <div class="wrap-login100">
             <form class="login100-form validate-form">
               <span class="login100-form-logo">
-                <img class="img" src="img/IUSlogo2.png" />
+                <img className="img" src={Logo} />
               </span>
 
               <span class="login100-form-title p-b-34 p-t-27">Register</span>
