@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "react-bootstrap";
 import "../css/style.css";
 import Logo from "../img/IUSlogo2.png";
 import Cookie from "js-cookie";
@@ -18,16 +17,19 @@ export default class Navigation extends Component {
 
     this.state = {
       isLogin: false,
-      user: "",
+      fullName: "",
     };
   }
 
   async componentDidMount() {
     const response = await fetch(
-      "http://localhost:5000/users/" + Cookie.get("userID")
+      "http://localhost:5000/users/auth?token=" +
+        Cookie.get("token") +
+        "&userId=" +
+        Cookie.get("userId")
     );
     this.setState({
-      user: Cookie.get("userID"),
+      fullName: Cookie.get("name") + " " + Cookie.get("surname"),
     });
   }
 
@@ -59,7 +61,7 @@ export default class Navigation extends Component {
           <img className="ius" src={Logo} />
           <span
             className="user"
-            dangerouslySetInnerHTML={{ __html: this.state.user }}
+            dangerouslySetInnerHTML={{ __html: this.state.fullName }}
           ></span>
         </div>
         <div className="upButtons">

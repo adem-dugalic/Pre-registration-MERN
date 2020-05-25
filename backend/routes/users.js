@@ -1,190 +1,189 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
 /*Models*/
-const User = require('../models/User.model');
-const UserSession = require('../models/UserSession.model');
-const UserCourses = require('../models/UserCourses.model');
+const User = require("../models/User.model");
+const UserSession = require("../models/UserSession.model");
+const UserCourses = require("../models/UserCourses.model");
 
-const jwt = require('jsonwebtoken');
-const auth = require('../middleware/auth');
+const jwt = require("jsonwebtoken");
+const auth = require("../middleware/auth");
 
 //Display user's informations ONLY
-router.route('/').get(auth,(req,res)=> {
-    const userId = req.cookies['userId'] || req.query.userId;
+router.route("/").get(auth, (req, res) => {
+  const userId = req.cookies["userId"] || req.query.userId;
 
-    User.findById(userId)
-        .then(user => {
-            UserCourses.findOne({userId:userId})
-                .then((data) => {
-
-                    res.json({user:user,courses:data?data.courses:[]})
-                })
-                .catch((err) =>  res.status(400).json('Error: ' + err));
+  User.findById(userId)
+    .then((user) => {
+      UserCourses.findOne({ userId: userId })
+        .then((data) => {
+          res.json({ user: user, courses: data ? data.courses : [] });
         })
-        .catch(err => res.status(400).json('Error: ' + err));
-});
-
-router.route('/userImport').post((req, res) => {
-
-    const user = new User({
-        userID: req.body.userID,
-        name: req.body.name,
-        surname: req.body.surname,
-        faculty: req.body.faculty,
-        program: req.body.program,
-        semester: req.body.semester,
-        email: req.body.email,
-    });
-
-    user.save().then(
-        () => {
-            res.status(201).json({
-                message: 'User added successfully!'
-            });
-        }
-    ).catch(
-        (error) => {
-            res.status(500).json({
-                error: error
-            });
-        }
-    );
-});
-
-router.route('/signup').post((req, res) => {
- 
-    User.findOne({userID: req.body.userID}).then((user) => {
-        if (!user) {
-            return res.status(404).json({
-                message: 'User not found!',
-                error: new Error('User not found!')
-            });
-        }
-        else if (user.password){
-            return res.status(405).json({
-                message: 'That user has alreday signed up!',
-                error: new Error('That user has already signed up!')
-            });
-        }
-        else{
-            user.password = user.generateHash(req.body.password);
-
-            user.save().then(
-                () => {
-                    res.status(201).json({
-                        message: 'You have registered successfully!'
-                    });
-                }
-            ).catch(
-                (error) => {
-                    res.status(500).json({
-                        error: error
-                    });
-                }
-            );
-        }
+        .catch((err) => res.status(400).json("Error: " + err));
     })
-
-   
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route('/login').post((req, res) => {
+router.route("/userImport").post((req, res) => {
+  const user = new User({
+    userID: req.body.userID,
+    name: req.body.name,
+    surname: req.body.surname,
+    faculty: req.body.faculty,
+    program: req.body.program,
+    semester: req.body.semester,
+    email: req.body.email,
+  });
 
-    User.findOne({ userID: req.body.userID }).then(
-        (user) => {
-           if (!user) {
-                return res.status(401).json({
-                    error: new Error('User not found!')
-                });
-             }
-
-            if(user.validPassword(req.body.password))
-            {
-                const token = jwt.sign(
-                    { userId: user._id },
-                    'RANDOM_TOKEN_SECRET',
-                    { expiresIn: '24h' });
-
-                UserSession.replaceOne({userId: user._id},{userId: user._id, token: token},{ upsert: true })
-                    .then((session) => {
-                        //console.log("replaceOne worked " + session);
-                        if(user.isAdmin){
-                            res.status(200).json({
-                                userId: user._id,
-                                token: token,
-                                expiresIn: 1,
-                                isAdmin: true 
-                            });
-                        }
-                        else{
-                            res.status(200).json({
-                                userId: user._id,
-                                token: token,
-                                expiresIn: 1,
-                                isAdmin: false
-                            });
-                        }
-                    })
-                    .catch((err) => {
-                        res.status(401).json('Error replaceOne: ' + err);
-                    });
-
-            }
-            else
-            {
-                return res.status(401).json({
-                    message:'Incorrect password',
-                    error: new Error('Incorrect password!')
-                });
-            }
-        }
-    ).catch(
-        (error) => {
-            res.status(500).json({
-                error: error
-            });
-        }
-    );
+  user
+    .save()
+    .then(() => {
+      res.status(201).json({
+        message: "User added successfully!",
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        error: error,
+      });
+    });
 });
 
-router.route('/logout').get(auth,(req, res) => {
+router.route("/signup").post((req, res) => {
+  User.findOne({ userID: req.body.userID }).then((user) => {
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found!",
+        error: new Error("User not found!"),
+      });
+    } else if (user.password) {
+      return res.status(405).json({
+        message: "That user has alreday signed up!",
+        error: new Error("That user has already signed up!"),
+      });
+    } else {
+      user.password = user.generateHash(req.body.password);
 
-    const userId = req.cookies['userId'] || req.query.userId;
-    res.clearCookie("token");
-    res.clearCookie("userId");
-    UserSession.findOneAndDelete({userId:userId})
+      user
+        .save()
         .then(() => {
-            res.status(200).json("Done!");
+          res.status(201).json({
+            message: "You have registered successfully!",
+          });
         })
-        .catch((err) => {
-            res.status(400).json('Error: ' + err);
-        })
+        .catch((error) => {
+          res.status(500).json({
+            error: error,
+          });
+        });
+    }
+  });
+});
 
+router.route("/login").post((req, res) => {
+  User.findOne({ userID: req.body.userID })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({
+          error: new Error("User not found!"),
+        });
+      }
+
+      if (user.validPassword(req.body.password)) {
+        const token = jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
+          expiresIn: "24h",
+        });
+
+        UserSession.replaceOne(
+          { userId: user._id },
+          { userId: user._id, token: token },
+          { upsert: true }
+        )
+          .then((session) => {
+            //console.log("replaceOne worked " + session);
+            if (user.isAdmin) {
+              res.status(200).json({
+                userId: user._id,
+                token: token,
+                expiresIn: 1,
+                isAdmin: true,
+              });
+            } else {
+              res.status(200).json({
+                userId: user._id,
+                token: token,
+                expiresIn: 1,
+                isAdmin: false,
+                name: user.name,
+                surname: user.surname,
+              });
+            }
+          })
+          .catch((err) => {
+            res.status(401).json("Error replaceOne: " + err);
+          });
+      } else {
+        return res.status(401).json({
+          message: "Incorrect password",
+          error: new Error("Incorrect password!"),
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        error: error,
+      });
+    });
+});
+
+router.route("/logout").get(auth, (req, res) => {
+  const userId = req.cookies["userId"] || req.query.userId;
+  res.clearCookie("token");
+  res.clearCookie("userId");
+  UserSession.findOneAndDelete({ userId: userId })
+    .then(() => {
+      res.status(200).json("Done!");
+    })
+    .catch((err) => {
+      res.status(400).json("Error: " + err);
+    });
+});
+
+router.route("/userInfo").get(auth, (req, res) => {
+  User.findOne({ userID: req.body.userID }).then((user) => {
+    res.status(200).json({
+      name: user.name,
+      surname: user.surname,
+    });
+  });
 });
 
 /*This endpoint allow the frontend to check if the user is login*/
-router.route('/auth').get(auth,(req, res) => {
-    res.status(200).json("True");
+router.route("/auth").get(auth, (req, res) => {
+  res.status(200).json("True");
 });
 
-router.route('/setUserCourses').post(auth,(req,res)=> {
-    console.log(req.body.userId || req.query.userId);
-    //add to the user a course
-    UserCourses.replaceOne({userId:req.body.userId},{userId:req.body.userId, courses:req.body.courses},{ upsert: true })
-        .then(() => {
-            res.json("Added!");
-        })
-        .catch((err) => res.status(401).json('Error: ' + err));
-});
-
-router.route('/delete').delete((req, res) => {
-    User.findOneAndDelete({name:req.body.name})
+router.route("/setUserCourses").post(auth, (req, res) => {
+  console.log(req.body.userId || req.query.userId);
+  //add to the user a course
+  UserCourses.replaceOne(
+    { userId: req.body.userId },
+    { userId: req.body.userId, courses: req.body.courses },
+    { upsert: true }
+  )
     .then(() => {
-        res.status(200).json("Done!");
+      res.json("Added!");
+    })
+    .catch((err) => res.status(401).json("Error: " + err));
+});
+
+router.route("/delete").delete((req, res) => {
+  User.findOneAndDelete({ name: req.body.name })
+    .then(() => {
+      res.status(200).json("Done!");
     })
     .catch((err) => {
-        res.status(400).json('Error: ' + err);
-    })
+      res.status(400).json("Error: " + err);
+    });
 });
 //TODO: do update / edit / push / delete
 
@@ -214,6 +213,5 @@ router.route('/update/:id').post((req,res)=>{
         })
         .catch(err => res.status(400).json('Error: ' + err));
 });*/
-
 
 module.exports = router;

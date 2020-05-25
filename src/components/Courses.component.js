@@ -1,10 +1,53 @@
 import React, { Component } from "react";
 import "../css/style.css";
+import axios from "axios";
 import Cookie from "js-cookie";
+import Magnifier from "../img/magnifier.png";
 
 export default class Courses extends Component {
   constructor(props) {
     super(props);
+
+    this.updateTable = this.updateTable.bind(this);
+
+    this.state = {
+      data: [],
+      page: 1,
+    };
+  }
+
+  //Right before anything load the page this is called
+  async componentDidMount() {
+    await this.updateTable();
+  }
+
+  async updateTable() {
+    const response = await fetch(
+      "http://localhost:5000/courses?page=" +
+        this.state.page +
+        "&token=" +
+        Cookie.get("token") +
+        "&userId=" +
+        Cookie.get("userId")
+    );
+    const res = await response.json();
+
+    this.setState({
+      data: res.array,
+    });
+  }
+
+  async addCourses(e) {
+    const added = {
+      userId: Cookie.get("userId"),
+      courseId: e,
+    };
+    axios
+      .post("http://localhost:5000/users/setUserCourses", added)
+      .then((res) => {
+        console.log("Success");
+      })
+      .catch((err) => alert("Error: " + err));
   }
 
   render() {
@@ -21,7 +64,7 @@ export default class Courses extends Component {
               <input type="search" name="search" placeholder="Search" />
             </form>
             <button className="magnifier">
-              <img src="../img/magnifier.png" className="manifierImg" />
+              <img src={Magnifier} className="manifierImg" />
             </button>
           </div>
           <div className="prevNext">
@@ -39,138 +82,46 @@ export default class Courses extends Component {
           </div>
         </div>
         <div className="allCourses" id="allCourses">
-          <table className="courses">
-            <tbody>
-              <tr className="info">
-                <td>Course Code</td>
-                <td>Course Name</td>
-                <td>Credit</td>
-                <td>Proffesor</td>
-                <td>Prerequisites</td>
-                <td>Add course</td>
-              </tr>
-              <tr>
-                <td className="title">CS103</td>
-                <td>Introduction to Programming</td>
-                <td>3 | 6</td>
-                <td>Džejla Međedović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">ELIT100</td>
-                <td>Academic English and Effective Communication</td>
-                <td>3 | 6</td>
-                <td>Elmedin Zubović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">MATH101</td>
-                <td>Calculus I</td>
-                <td>3 | 6</td>
-                <td>Lejla Miller</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">NS112</td>
-                <td>Understanding Science and Technology</td>
-                <td>1.5 | 3</td>
-                <td>Asif Šabanović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">PSY103</td>
-                <td>Introduction to Psychology</td>
-                <td>3 | 6</td>
-                <td>Bojan Šošić</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">TURK111</td>
-                <td>Spoken Turkish I</td>
-                <td>1.5 | 3</td>
-                <td>Minela Sinanović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">MATH201</td>
-                <td>Linear Algebra</td>
-                <td>3 | 6</td>
-                <td>Mehmet Can</td>
-                <td>MATH101</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">PSY103</td>
-                <td>Introduction to Psychology</td>
-                <td>3 | 6</td>
-                <td>Bojan Šošić</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">TURK111</td>
-                <td>Spoken Turkish I</td>
-                <td>1.5 | 3</td>
-                <td>Minela Sinanović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">MATH201</td>
-                <td>Linear Algebra</td>
-                <td>3 | 6</td>
-                <td>Mehmet Can</td>
-                <td>MATH101</td>
-                <td>
-                  <div className="button">
-                    <button>Add Course</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <form className="allCoursesForm">
+            <table className="courses">
+              <tbody>
+                <tr className="info">
+                  <td>Course Code</td>
+                  <td>Course Name</td>
+                  <td>Professor</td>
+                  <td>Faculty</td>
+                  <td>Prerequisites</td>
+                  <td>Add course</td>
+                </tr>
+                {this.state.data.map(function (item, i) {
+                  return (
+                    <tr key={i}>
+                      <td className="title">{item.course_id}</td>
+                      <td>
+                        <a href={"https://ecampus.ius.edu.ba/" + item.Url}>
+                          {item.course_name}
+                        </a>
+                      </td>
+                      <td>{item.Lecturer}</td>
+                      <td>{item.AcademicUnit}</td>
+                      <td>
+                        {item.prerequisite.map((item) => {
+                          return item + " ";
+                        })}
+                      </td>
+                      <td>
+                        <div className="button">
+                          <button onClick={this.addCourses(item.course_id)}>
+                            Add Course
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </form>
         </div>
       </div>
     );

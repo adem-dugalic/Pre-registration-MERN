@@ -911,3 +911,13 @@ a {
   top: 50%;
   transform: translate(0%, -50%);
 }
+
+form {
+  width: 100%;
+}
+
+.allCoursesForm {
+  position: relative;
+  left: 50%;
+  transform: translate(-35%, 0%);
+}
