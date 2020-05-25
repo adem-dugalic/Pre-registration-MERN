@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import Cookie from "js-cookie";
 import "../css/style.css";
 import "../css/main.css";
@@ -72,9 +72,9 @@ export default class CreateUser extends Component {
               </div>
 
               <div className="text-center p-t-90">
-                <a className="txt1" href="register.html">
+                <Link className="txt1" to="/Home">
                   Don't have an account!? Register!
-                </a>
+                </Link>
               </div>
             </form>
           </div>

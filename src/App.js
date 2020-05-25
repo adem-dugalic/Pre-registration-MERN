@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./css/style.css";
 
 import Navigation from "./components/navbar.component";
@@ -10,27 +10,36 @@ import UserCourses from "./components/UserCourses.component";
 import Home from "./components/Home.component";
 import Schedule from "./components/Schedule.component";
 
-const containerStyle = {
-  maxWidth: "100%",
-  paddingLeft: "0px",
-  paddingRight: "0px",
-};
-
 function App() {
   return (
-    <Router>
-      <div className="outerWrapper">
+    <div className="outerWrapper">
+      <Switch>
+        <Route exact path="/">
+          <Route component={Login} />
+        </Route>
+        <Route exact path="/Signup">
+          <Route component={SignUp} />
+        </Route>
         <div className="wrapper">
-          <Navigation />
-          <Route path="/Home" component={Home} />
-          <Route path="/Courses" component={Courses} />
-          <Route path="/UserCourses" component={UserCourses} />
-          <Route path="/Schedule" component={Schedule} />
+          <Route exact path="/Home">
+            <Navigation />
+            <Route exact component={Home} />
+          </Route>
+          <Route exact path="/Courses">
+            <Navigation />
+            <Route component={Courses} />
+          </Route>
+          <Route exact path="/UserCourses">
+            <Navigation />
+            <Route component={UserCourses} />
+          </Route>
+          <Route exact path="/Schedule">
+            <Navigation />
+            <Route component={Schedule} />
+          </Route>
         </div>
-        <Route path="/Login" component={Login} />
-        <Route path="/Signup" component={SignUp} />
-      </div>
-    </Router>
+      </Switch>
+    </div>
   );
 }
 
