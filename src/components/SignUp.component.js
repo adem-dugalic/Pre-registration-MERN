@@ -9,6 +9,12 @@ import "../css/util.css";
 export default class CreateUser extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      ID: "",
+      Password: "",
+      ConfirmPassword: "",
+    };
   }
 
   render() {
