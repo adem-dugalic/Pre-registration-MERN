@@ -2,3 +2,5 @@
  .idea/
  backend/
  build/
+ .env/
+backend/.env
