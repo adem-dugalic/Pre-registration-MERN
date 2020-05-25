@@ -6,7 +6,7 @@ const auth = require('../middleware/auth');
 router.route('/').get(auth,(req, res) => {
 
     const page = req.query.page || 1;
-    const nPerPage = req.query.nPerPage || 20;
+    const nPerPage = req.query.nPerPage || 200;
 
     Course.find()
         .skip( page > 0 ? ( ( page - 1 ) * nPerPage ) : 0 )
