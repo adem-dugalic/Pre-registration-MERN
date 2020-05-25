@@ -1,92 +1,171 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { Card } from "react-bootstrap";
-
-import "../css/style.css";
-import "../css/main.css";
-import "../css/util.css";
+import React, {Component} from "react";
+import axios from 'axios';
+import {Card} from "react-bootstrap";
 
 export default class CreateUser extends Component {
-  constructor(props) {
-    super(props);
-  }
+    constructor(props) {
+        super(props);
 
-  render() {
-    return (
-      <div class="limiter">
-        <div class="container-login100">
-          <div class="wrap-login100">
-            <form class="login100-form validate-form">
-              <span class="login100-form-logo">
-                <img class="img" src="img/IUSlogo2.png" />
-              </span>
+        this.onChangeName = this.onChangeName.bind(this);
+        this.onChangeSurname = this.onChangeSurname.bind(this);
+        this.onChangeEmail = this.onChangeEmail.bind(this);
 
-              <span class="login100-form-title p-b-34 p-t-27">Register</span>
+        this.onChangePassword = this.onChangePassword.bind(this);
+        this.onChangeRePassword = this.onChangeRePassword.bind(this);
+        this.onChangeFaculty = this.onChangeFaculty.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
 
-              <div
-                class="wrap-input100 validate-input"
-                data-validate="Enter ID"
-              >
-                <input
-                  class="input100"
-                  type="text"
-                  name="username"
-                  placeholder="ID"
-                />
-                <span class="focus-input100" data-placeholder="&#xf207;"></span>
-              </div>
+        this.state = {
+            name: '',
+            surname: '',
+            password: '',
+            repassword: '',
+            faculty:'',
+            email: ''
+        };
 
-              <div
-                class="wrap-input100 validate-input"
-                data-validate="Enter password"
-              >
-                <input
-                  class="input100"
-                  type="password"
-                  name="pass"
-                  placeholder="Password"
-                />
-                <span class="focus-input100" data-placeholder="&#xf191;"></span>
-              </div>
+    }
 
-              <div
-                class="wrap-input100 validate-input"
-                data-validate="Confirm password"
-              >
-                <input
-                  class="input100"
-                  type="password"
-                  name="pass"
-                  placeholder="Confirm password"
-                />
-                <span class="focus-input100" data-placeholder="&#xf191;"></span>
-              </div>
+    //Right before anything load the page this is called
+    componentDidMount() {
 
-              <div class="contact100-form-checkbox">
-                <input
-                  class="input-checkbox100"
-                  id="ckb1"
-                  type="checkbox"
-                  name="remember-me"
-                />
-                <label class="label-checkbox100" for="ckb1">
-                  Remember me
-                </label>
-              </div>
+    }
 
-              <div class="container-login100-form-btn">
-                <button class="login100-form-btn">Login</button>
-              </div>
+    onChangeName(e) {
+        this.setState({
+            name: e.target.value
+        });
+    }
 
-              <div class="text-center p-t-90">
-                <a class="txt1" href="index.html">
-                  Have an account!? Log in now!
-                </a>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    onChangeSurname(e) {
+        this.setState({
+            surname: e.target.value
+        });
+    }
+
+    onChangeEmail(e) {
+        this.setState({
+            email: e.target.value
+        });
+    }
+
+
+    onChangeFaculty(e) {
+        this.setState({
+            faculty: e.target.value
+        });
+    }
+
+    onChangePassword(e) {
+        this.setState({
+            password: e.target.value
+        });
+    }
+
+    onChangeRePassword(e) {
+        this.setState({
+            repassword: e.target.value
+        })
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+
+        if(this.state.repassword !== this.state.password)
+        {
+            alert("Error");
+            window.location = '/signup';
+            return;
+        }
+
+        const user = {
+            name: this.state.name,
+            surname: this.state.surname,
+            password: this.state.password,
+            faculty: this.state.faculty,
+            email: this.state.email
+        };
+
+        console.log(user);
+
+        axios.post('http://localhost:3000/users/signup', user)
+            .then(res => {
+                console.log("Success");
+                window.location = '/login';
+            })
+            .catch((err) => alert("Error: " + err));
+
+    }
+
+
+    render() {
+        return (
+            <Card style={{width: '18rem'}} className="mx-auto">
+                <Card.Body>
+                    <Card.Title>Register</Card.Title>
+                    <form onSubmit={this.onSubmit}>
+                        <div className="form-group">
+                            <label>Name: </label>
+                            <input type="text"
+                                   required
+                                   className="form-control"
+                                   value={this.state.name}
+                                   onChange={this.onChangeName}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Surname: </label>
+                            <input type="text"
+                                   required
+                                   className="form-control"
+                                   value={this.state.surname}
+                                   onChange={this.onChangeSurname}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Email: </label>
+                            <input type="text"
+                                   required
+                                   className="form-control"
+                                   value={this.state.email}
+                                   onChange={this.onChangeEmail}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Faculty: </label>
+                            <input type="text"
+                                   required
+                                   className="form-control"
+                                   value={this.state.faculty}
+                                   onChange={this.onChangeFaculty}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Password: </label>
+                            <input type="password"
+                                   required
+                                   className="form-control"
+                                   value={this.state.password}
+                                   onChange={this.onChangePassword}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Retype your password: </label>
+                            <input type="password"
+                                   required
+                                   className="form-control"
+                                   value={this.state.repassword}
+                                   onChange={this.onChangeRePassword}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <input type="submit" value="Sign up" className="btn btn-primary"/>
+                        </div>
+                    </form>
+                </Card.Body>
+            </Card>
+        );
+    }
 }

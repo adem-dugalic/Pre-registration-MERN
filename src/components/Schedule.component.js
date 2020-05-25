@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import "../css/style.css";
 import Cookie from "js-cookie";
 import axios from "axios";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import Navigation from "./navbar.component";
 
 export default class Home extends Component {
   constructor(props) {
@@ -11,6 +13,9 @@ export default class Home extends Component {
 
   render() {
     return (
+      <Router>
+      <div className="wrapper">
+      <Navigation/>
       <div class="schedule">
         <div class="menu">
           <div class="line1"></div>
@@ -146,6 +151,8 @@ export default class Home extends Component {
           </div>
         </div>
       </div>
+      </div>
+      </Router>
     );
   }
 }
