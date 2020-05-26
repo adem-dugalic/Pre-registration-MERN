@@ -6,6 +6,7 @@ import Cookie from "js-cookie";
 import "../css/style.css";
 import "../css/main.css";
 import "../css/util.css";
+import "../fonts/iconic/css/material-design-iconic-font.min.css";
 
 export default class Login extends Component {
   constructor(props) {

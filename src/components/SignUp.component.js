@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import "../css/style.css";
 import "../css/main.css";
 import "../css/util.css";
+import "../fonts/iconic/css/material-design-iconic-font.min.css";
 
 export default class SignUp extends Component {
   constructor(props) {

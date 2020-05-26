@@ -12,6 +12,7 @@ export default class Courses extends Component {
     //this.onChangeCourses = this.onChangeCourses.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onAddItem = this.onAddItem.bind(this);
+    //this.changeLooks = this.changeLooks.bind(this);
 
     this.state = {
       data: [],
@@ -80,6 +81,11 @@ export default class Courses extends Component {
       .catch((err) => alert("Error: " + err));
   }
 
+  /*  changeLooks(e) {
+    var btn = document.querySelector(".downBtn");
+    btn.style.background = "#292626";
+  } */
+
   render() {
     return (
       <div className="addCourses">
@@ -113,7 +119,9 @@ export default class Courses extends Component {
         </div>
         <div className="allCourses" id="allCourses">
           <form onSubmit={this.onSubmit} className="allCoursesForm">
-            <button>Confirm Selection</button>
+            <div className="buttonAbove">
+              <button id="coursesBtn">Confirm Selection</button>
+            </div>
             <table className="courses">
               <tbody>
                 <tr className="info">
@@ -143,7 +151,11 @@ export default class Courses extends Component {
                       <td>
                         <div className="button">
                           <button
-                            onClick={() => this.onAddItem(item.course_id)}
+                            className="downBtn"
+                            onClick={
+                              () => this.onAddItem(item.course_id)
+                              //this.changeLooks()
+                            }
                           >
                             Add Course
                           </button>
