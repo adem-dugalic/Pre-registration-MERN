@@ -19,6 +19,8 @@ export default class Courses extends Component {
 
     this.updateTable = this.updateTable.bind(this);
     this.setPage = this.setPage.bind(this);
+    this.onChangeSearch = this.onChangeSearch.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
       data: [],
@@ -26,6 +28,16 @@ export default class Courses extends Component {
       nbOfPage: -1,
       buttonsGroup: [],
     };
+  }
+
+  onChangeSearch(e){
+    this.setState({
+      value: e.target.value,
+    })
+  }
+
+  onSubmit(e){
+
   }
 
   //Right before anything load the page this is called

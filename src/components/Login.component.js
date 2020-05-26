@@ -47,6 +47,8 @@ export default class Login extends Component {
         console.log(res.data);
         Cookie.set("token", res.data.token);
         Cookie.set("userId", res.data.userId);
+        Cookie.set("name", res.data.name);
+        Cookie.set("surname", res.data.surname);
         //Return to the user list
         window.location = "/Home";
       })
