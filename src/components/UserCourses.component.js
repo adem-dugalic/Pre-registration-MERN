@@ -1,10 +1,82 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Cookie from "js-cookie";
+import { Link } from "react-router-dom";
 
 export default class UserCourses extends Component {
   constructor(props) {
     super(props);
+
+    this.updateTable = this.updateTable.bind(this);
+    //this.onChangeCourses = this.onChangeCourses.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onAddItem = this.onAddItem.bind(this);
+
+    this.state = {
+      data: [],
+      page: 1,
+      courses: [],
+      //course: "",
+      userId: "",
+    };
+  }
+
+  //Right before anything load the page this is called
+  async componentDidMount() {
+    await this.updateTable();
+  }
+
+  async updateTable() {
+    const response = await fetch(
+      "http://localhost:5000/courses?page=" +
+        this.state.page +
+        "&token=" +
+        Cookie.get("token") +
+        "&userId=" +
+        Cookie.get("userId")
+    );
+    const res = await response.json();
+
+    this.setState({
+      data: res.array,
+    });
+  }
+
+  /*  onChangeCourse = (event) => {
+    this.setState({ course: event.target.value });
+  }; */
+
+  onAddItem(course) {
+    this.setState((state) => {
+      const courses = [...state.courses, course];
+      return {
+        courses,
+      };
+    });
+  }
+
+  /*  onChangeCourses(e) {
+    this.state.courses.push(e);
+  } */
+
+  onSubmit(e) {
+    e.preventDefault();
+    const added = {
+      userId: Cookie.get("userId"),
+      courses: this.state.courses,
+    };
+    axios
+      .post(
+        "http://localhost:5000/users/setUserCourses?token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId"),
+        added
+      )
+      .then((res) => {
+        console.log("Success");
+      })
+      .catch((err) => alert("Error: " + err));
   }
 
   render() {
@@ -32,7 +104,9 @@ export default class UserCourses extends Component {
         <div class="downNav">
           <div class="passedCurrent">
             <a id="passedC">Passed courses</a>
-            <a id="currentC">Current courses</a>
+            <Link id="currentC" to="/UserCoursesCurrent">
+              Current courses
+            </Link>
           </div>
         </div>
         <div class="passedCourses">

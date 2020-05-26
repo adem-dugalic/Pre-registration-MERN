@@ -81,6 +81,7 @@ a {
   background: #292626;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
+  color: #fff;
 }
 
 /* Blue logo */
@@ -167,12 +168,17 @@ a {
 }
 
 /* ###### */
-#LogOut {
+.LogOut {
   padding-left: 15px;
   padding-right: 15px;
   animation-duration: 0.3s;
   transition-timing-function: ease-in;
   animation-name: fadeIn;
+}
+
+.LogOut button {
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
 }
 
 /* ============================
@@ -244,11 +250,12 @@ a {
 .home .developers {
   margin-top: 10%;
   color: #fff;
-  font-family: "Roboto";
+  font-family: "Montserrat", sans-serif;
 }
 
 .home .developers .devP {
   font-size: 1em;
+  color: #fff;
 }
 
 /* #### responsivnes for home #####*/

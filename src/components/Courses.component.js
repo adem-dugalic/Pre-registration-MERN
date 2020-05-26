@@ -9,10 +9,16 @@ export default class Courses extends Component {
     super(props);
 
     this.updateTable = this.updateTable.bind(this);
+    //this.onChangeCourses = this.onChangeCourses.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onAddItem = this.onAddItem.bind(this);
 
     this.state = {
       data: [],
       page: 1,
+      courses: [],
+      //course: "",
+      userId: "",
     };
   }
 
@@ -37,13 +43,37 @@ export default class Courses extends Component {
     });
   }
 
-  async addCourses(e) {
+  /*  onChangeCourse = (event) => {
+    this.setState({ course: event.target.value });
+  }; */
+
+  onAddItem(course) {
+    this.setState((state) => {
+      const courses = [...state.courses, course];
+      return {
+        courses,
+      };
+    });
+  }
+
+  /*  onChangeCourses(e) {
+    this.state.courses.push(e);
+  } */
+
+  onSubmit(e) {
+    e.preventDefault();
     const added = {
       userId: Cookie.get("userId"),
-      courseId: e,
+      courses: this.state.courses,
     };
     axios
-      .post("http://localhost:5000/users/setUserCourses", added)
+      .post(
+        "http://localhost:5000/users/setUserCourses?token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId"),
+        added
+      )
       .then((res) => {
         console.log("Success");
       })
@@ -82,7 +112,8 @@ export default class Courses extends Component {
           </div>
         </div>
         <div className="allCourses" id="allCourses">
-          <form className="allCoursesForm">
+          <form onSubmit={this.onSubmit} className="allCoursesForm">
+            <button>Confirm Selection</button>
             <table className="courses">
               <tbody>
                 <tr className="info">
@@ -93,7 +124,7 @@ export default class Courses extends Component {
                   <td>Prerequisites</td>
                   <td>Add course</td>
                 </tr>
-                {this.state.data.map(function (item, i) {
+                {this.state.data.map((item, i) => {
                   return (
                     <tr key={i}>
                       <td className="title">{item.course_id}</td>
@@ -111,7 +142,9 @@ export default class Courses extends Component {
                       </td>
                       <td>
                         <div className="button">
-                          <button onClick={this.addCourses(item.course_id)}>
+                          <button
+                            onClick={() => this.onAddItem(item.course_id)}
+                          >
                             Add Course
                           </button>
                         </div>
