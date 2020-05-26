@@ -83,7 +83,6 @@ router.route('/update').post((req, res) => {
     );
 });
 
-
 router.route('/search').get(auth,(req, res) => {
 
     const value = req.query.value;
@@ -96,7 +95,6 @@ router.route('/search').get(auth,(req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
 
 });
-
 
 
 

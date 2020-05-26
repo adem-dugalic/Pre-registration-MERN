@@ -167,6 +167,14 @@ router.route('/auth').get(auth,(req, res) => {
     res.status(200).json("True");
 });
 
+router.route('/getUserCourses').get((req,res) => {
+    console.log(req.body.userId || req.query.userId);
+    //find user and all his/hers courses
+    UserCourses.find({userId:req.body.userId})
+    .then(courses => res.json(courses))
+    .catch((err) => res.status(400).json('Error: ' + err));
+});
+
 router.route('/setUserCourses').post(auth,(req,res)=> {
     console.log(req.body.userId || req.query.userId);
     //add to the user a course
