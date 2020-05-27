@@ -142,7 +142,6 @@ router.route("/logout").get(auth, (req, res) => {
   UserSession.findOneAndDelete({ userId: userId })
     .then(() => {
       res.status(200).json("Done!");
-      console.log(userId);
     })
     .catch((err) => {
       res.status(400).json("Error: " + err);
@@ -195,6 +194,51 @@ router.route("/userCourse").get(auth, (req, res) => {
       $project: {
         information: 1,
         courses: 1,
+      },
+    },
+  ]).exec((err, result) => {
+    if (err) {
+      res.status(500).json(err);
+    }
+    if (result) {
+      if (result.length === 0) res.status(400).json("Error: can't found data");
+      else res.status(200).json(result);
+    }
+  });
+});
+
+router.route("/finishedCourse").get((req, res) => {
+  const userId = req.cookies["userId"] || req.body.userId;
+  console.log(userId);
+  UserCourses.aggregate([
+    {
+      $match: { userId: userId },
+    },
+    {
+      $project: {
+          finishedCourses: {
+          $map: {
+            input: "$finishedCourses",
+            as: "item1",
+            in: {
+              $toObjectId: "$$item1",
+            },
+          },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "finishedCourses",
+        foreignField: "_id",
+        as: "information",
+      },
+    },
+    {
+      $project: {
+        information: 1,
+        finishedCourses: 1,
       },
     },
   ]).exec((err, result) => {

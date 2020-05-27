@@ -4,6 +4,7 @@ const router = require('express').Router();
 const User = require('../models/User.model');
 const UserSession = require('../models/UserSession.model');
 const Course = require('../models/Course.model');
+const UserCourses = require('../models/UserCourses.model');
 
 
 router.route('/userImport').post((req, res) => {
@@ -34,11 +35,26 @@ router.route('/userImport').post((req, res) => {
 });
 
 router.route('/finishedCoursesImport').post((req,res) => {
-    const userCourses = new UserCourses ({
-        userId:req.body.userId,
-        finishedCourses: body.req.finishedCourses,
-    })
-})
+        console.log(req.body.userId || req.query.userId);
+      
+        const userId = req.cookies["userId"] || req.body.userId;
+        const courseId = req.body.courseId;
+        if (!courseId) {
+          res.json("Error course not defined in queries.");
+        }
+        //add to the user a course
+        UserCourses.updateOne(
+          { userId: userId.trim() },
+          { userId: userId, $push: { finishedCOurses: courseId } },
+          { upsert: false }
+        )
+          .then(() => {
+            res.json("courseId updated");
+          })
+          .catch((err) => res.status(401).json("Error: " + err));
+});
+      
+  
 
 router.route('/getUserCourses').get((req,res) => {
     UserCourses.find()
@@ -73,10 +89,6 @@ router.route('/delete').delete((req, res) => {
         res.status(400).json('Error: ' + err);
     })
 });
-
-
-
-
 
 /*This is an example of function to give data to client (slowly) for example for big operation
 * where we want to inform the client the progress we could use it*/
