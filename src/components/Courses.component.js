@@ -75,7 +75,6 @@ export default class Courses extends Component {
   }; */
 
   async onAddItem(course) {
-    course.preventDefault();
     console.log("onAddItem stuff");
     console.log(course);
     axios
