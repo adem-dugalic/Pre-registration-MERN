@@ -210,10 +210,11 @@ router.route("/userCourse").get(auth, (req, res) => {
 router.route("/addCourse").post(auth, (req, res) => {
   console.log(req.body.userId || req.query.userId);
 
-  const userId = req.cookies["userId"] || req.body.userId;
+  const userId = req.cookies["userId"] || req.query.userId;
   const courseId = req.body.courseId;
-  if (!courseId) return;
-
+  if (!courseId) {
+    res.json("Error course not define in queries.");
+  }
   //add to the user a course
   UserCourses.updateOne(
     { userId: userId.trim() },
@@ -230,8 +231,10 @@ router.route("/removeCourse").post(auth, (req, res) => {
   const userId = req.cookies["userId"] || req.query.userId;
   const courseId = req.query.courseId;
   if (!courseId) {
-    res.json("Erreur.");
+    res.json("Error course not define in queries.");
   }
+
+  console.log("Deleting: " + courseId);
 
   //add to the user a course
   UserCourses.updateOne(
@@ -242,7 +245,7 @@ router.route("/removeCourse").post(auth, (req, res) => {
     .then(() => {
       res.json("Removed");
     })
-    .catch((err) => res.status(401).json("Error: " + err));
+    .catch((err) => res.status(401).json(err));
 });
 
 router.route("/setUserCourses").post(auth, (req, res) => {

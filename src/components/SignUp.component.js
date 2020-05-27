@@ -63,7 +63,7 @@ export default class SignUp extends Component {
       })
       .catch((err) => alert("Error: " + err));
 
-    window.location = "/";
+    //window.location = "/"; don't refresh the page before the request is finish....
   }
 
   render() {

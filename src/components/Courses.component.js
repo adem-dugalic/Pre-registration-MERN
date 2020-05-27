@@ -10,24 +10,43 @@ export default class Courses extends Component {
 
     this.updateTable = this.updateTable.bind(this);
     //this.onChangeCourses = this.onChangeCourses.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+
     this.onAddItem = this.onAddItem.bind(this);
     //this.changeLooks = this.changeLooks.bind(this);
     this.onSearch = this.onSearch.bind(this);
+    this.getCurrentUserCourse = this.getCurrentUserCourse.bind(this);
 
     this.state = {
+      default:[], //We save the course to avoid to requery them each time.
+      userCourse:[],
       data: [],
       page: 1,
       courseId: [],
       //course: "",
       userId: "",
       courseID: "",
+
+      //search
+      search:"",
     };
   }
 
   //Right before anything load the page this is called
   async componentDidMount() {
+    this.getCurrentUserCourse();
     await this.updateTable();
+  }
+
+
+  getCurrentUserCourse()
+  {
+    axios.get("http://localhost:5000/users/userCourse?token=" + Cookie.get("token") + "&userId=" +  Cookie.get("userId"))
+        .then((res) => {
+          this.setState({
+            userCourse: res.data[0].courses,
+          });
+        })
+        .catch((err) => alert("Error: " + err));
   }
 
   async updateTable() {
@@ -43,6 +62,7 @@ export default class Courses extends Component {
 
     this.setState({
       data: res.array,
+      default: res.array,
     });
   }
 
@@ -53,58 +73,49 @@ export default class Courses extends Component {
   onAddItem(course) {
     console.log("onAddItem stuff");
     console.log(course);
-    this.setState((state) => {
-      const courseId = [...state.courseId, course];
-      return {
-        courseId,
-      };
-    });
-  }
-
-  /*  onChangeCourses(e) {
-    this.state.courses.push(e);
-  } */
-
-  onSubmit(e) {
-    console.log("onSubmit stuff");
-    console.log(this.state.courseId);
-    e.preventDefault();
-    const added = {
-      userId: Cookie.get("userId"),
-      courseId: this.state.courseId,
-    };
-    console.log(added); //ovde
     axios
-      .post(
-        "http://localhost:5000/users/addCourse?token=" +
-          Cookie.get("token") +
-          "&userId=" +
-          Cookie.get("userId"),
-        added
-      )
-      .then((res) => {
-        console.log("Success");
-      })
-      .catch((err) => alert("Error: " + err));
+        .post(
+            "http://localhost:5000/users/addCourse?token=" +
+            Cookie.get("token") +
+            "&userId=" +
+            Cookie.get("userId"),
+            {courseId:course}
+        )
+        .then((res) => {
+          console.log("Success");
+        })
+        .catch((err) => alert("Error: " + err));
   }
+
+
   // Search impelmentation
   onSearch(e) {
     e.preventDefault();
-    const added = {
-      coursID: this.state.courseID,
-    };
-    axios
-      .post(
-        "http://localhost:5000/courses/search?token=" +
-          Cookie.get("token") +
-          "&userId=" +
-          Cookie.get("userId"),
-        added
-      )
-      .then((res) => {
-        console.log("Success");
-      })
-      .catch((err) => alert("Error: " + err));
+    this.setState({
+      search:e.target.value
+    });
+    console.log(e.target.value);
+
+    if(e.target.value === 0)
+    {
+      this.setState({
+        data:this.state.default,
+      });
+      return;
+    }
+    else if(e.target.value.length<3)
+      return;
+
+    axios.get('http://localhost:5000/courses/search?value=' + e.target.value + '&token=' + Cookie.get('token') + "&userId="+Cookie.get('userId'))
+        .then(res => {
+          console.log(res.data);
+
+          this.setState({data:res.data});
+
+        })
+        .catch((err) => {
+          alert('Error: ' + err);
+        });
   }
 
   /*  changeLooks(e) {
@@ -123,7 +134,7 @@ export default class Courses extends Component {
         <div className="upperNav">
           <div className="search">
             <form className="searchForm">
-              <input type="search" name="search" placeholder="Search" />
+              <input type="search" name="search" placeholder="Search" onChange={this.onSearch} value={this.state.search} />
             </form>
             <button className="magnifier">
               <img src={Magnifier} className="manifierImg" />
@@ -144,10 +155,6 @@ export default class Courses extends Component {
           </div>
         </div>
         <div className="allCourses" id="allCourses">
-          <form onSubmit={this.onSubmit} className="allCoursesForm">
-            <div className="buttonAbove">
-              <button id="coursesBtn">Confirm Selection</button>
-            </div>
             <table className="courses">
               <tbody>
                 <tr className="info">
@@ -156,11 +163,11 @@ export default class Courses extends Component {
                   <td>Professor</td>
                   <td>Faculty</td>
                   <td>Prerequisites</td>
-                  <td>Add course</td>
+                  <td>Option</td>
                 </tr>
                 {this.state.data.map((item, i) => {
                   return (
-                    <tr key={i}>
+                    <tr key={i} style={this.state.userCourse.includes(item._id)>0?{background:"red"}:{background:"black"}}>
                       <td className="title">{item.course_id}</td>
                       <td>
                         <a href={"https://ecampus.ius.edu.ba/" + item.Url}>
@@ -176,13 +183,11 @@ export default class Courses extends Component {
                       </td>
                       <td>
                         <div className="button">
-                          <input
-                            type="checkbox"
-                            onClick={
-                              () => this.onAddItem(item._id)
-                              //this.changeLooks()
-                            }
-                          ></input>
+                          <div className="button">
+                            <button onClick={() => this.onAddItem(item._id)}>
+                              Add Course
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -190,7 +195,6 @@ export default class Courses extends Component {
                 })}
               </tbody>
             </table>
-          </form>
         </div>
       </div>
     );
