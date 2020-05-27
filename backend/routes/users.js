@@ -23,31 +23,6 @@ router.route("/").get(auth, (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/userImport").post((req, res) => {
-  const user = new User({
-    userID: req.body.userID,
-    name: req.body.name,
-    surname: req.body.surname,
-    faculty: req.body.faculty,
-    program: req.body.program,
-    semester: req.body.semester,
-    email: req.body.email,
-  });
-
-  user
-    .save()
-    .then(() => {
-      res.status(201).json({
-        message: "User added successfully!",
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        error: error,
-      });
-    });
-});
-
 router.route("/signup").post((req, res) => {
   User.findOne({ userID: req.body.userID }).then((user) => {
     if (!user) {
@@ -142,7 +117,6 @@ router.route("/logout").get(auth, (req, res) => {
   UserSession.findOneAndDelete({ userId: userId })
     .then(() => {
       res.status(200).json("Done!");
-      console.log(userId);
     })
     .catch((err) => {
       res.status(400).json("Error: " + err);
@@ -195,6 +169,51 @@ router.route("/userCourse").get(auth, (req, res) => {
       $project: {
         information: 1,
         courses: 1,
+      },
+    },
+  ]).exec((err, result) => {
+    if (err) {
+      res.status(500).json(err);
+    }
+    if (result) {
+      if (result.length === 0) res.status(400).json("Error: can't found data");
+      else res.status(200).json(result);
+    }
+  });
+});
+
+router.route("/finishedCourse").get((req, res) => {
+  const userId = req.cookies["userId"] || req.body.userId;
+  console.log(userId);
+  UserCourses.aggregate([
+    {
+      $match: { userId: userId },
+    },
+    {
+      $project: {
+          finishedCourses: {
+          $map: {
+            input: "$finishedCourses",
+            as: "item1",
+            in: {
+              $toObjectId: "$$item1",
+            },
+          },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "finishedCourses",
+        foreignField: "_id",
+        as: "information",
+      },
+    },
+    {
+      $project: {
+        information: 1,
+        finishedCourses: 1,
       },
     },
   ]).exec((err, result) => {
