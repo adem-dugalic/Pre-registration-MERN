@@ -8,8 +8,7 @@ const CourseSchema = new Schema({
     AcademicUnit: {type: String},
     prerequisite: {type: Array},
     UpdatedDate: {type: Date},
-    Url: {type: String},
-    noOfStudents: {type: Number}
+    Url: {type: String}
 });
 
 //CourseSchema.index({course_id:"text"});
