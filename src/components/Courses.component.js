@@ -170,6 +170,11 @@ export default class Courses extends Component {
         <div className="allCourses" id="allCourses">
           <table className="courses">
             <tbody>
+              <tr>
+                <th class="semesterNum" colspan="6">
+                  All courses
+                </th>
+              </tr>
               <tr className="info">
                 <td>Course Code</td>
                 <td>Course Name</td>
@@ -190,7 +195,10 @@ export default class Courses extends Component {
                   >
                     <td className="title">{item.course_id}</td>
                     <td>
-                      <a href={"https://ecampus.ius.edu.ba/" + item.Url}>
+                      <a
+                        className="ecampus"
+                        href={"https://ecampus.ius.edu.ba/" + item.Url}
+                      >
                         {item.course_name}
                       </a>
                     </td>
@@ -203,11 +211,12 @@ export default class Courses extends Component {
                     </td>
                     <td>
                       <div className="button">
-                        <div className="button">
-                          <button onClick={() => this.onAddItem(item._id)}>
-                            Add Course
-                          </button>
-                        </div>
+                        <button
+                          className="courseBtn"
+                          onClick={() => this.onAddItem(item._id)}
+                        >
+                          Add Course
+                        </button>
                       </div>
                     </td>
                   </tr>

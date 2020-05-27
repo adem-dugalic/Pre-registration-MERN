@@ -26,29 +26,40 @@ export default class UserCoursesCurrect extends Component {
   }
 
   async updateTable() {
-
-    axios.get("http://localhost:5000/users/userCourse?token=" + Cookie.get("token") + "&userId=" +  Cookie.get("userId"))
-        .then((res) => {
-          this.setState({
-            data: res.data[0].information,
-          });
-        })
-        .catch((err) => alert("Error: " + err));
+    axios
+      .get(
+        "http://localhost:5000/users/userCourse?token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId")
+      )
+      .then((res) => {
+        this.setState({
+          data: res.data[0].information,
+        });
+      })
+      .catch((err) => alert("Error: " + err));
   }
 
   onDelete(e) {
     console.log("Deleting courseId: " + e);
-    axios.post("http://localhost:5000/users/removeCourse?courseId=" + e +"&token=" + Cookie.get("token") + "&userId=" +  Cookie.get("userId"))
-        .then((res) => {
-          console.log(res);
-          window.location.reload();
-        })
-        .catch((err) => {
-          console.log("Error during deletion... see console " + err);
-        })
+    axios
+      .post(
+        "http://localhost:5000/users/removeCourse?courseId=" +
+          e +
+          "&token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId")
+      )
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log("Error during deletion... see console " + err);
+      });
   }
-
-
 
   render() {
     return (

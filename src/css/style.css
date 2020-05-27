@@ -585,6 +585,11 @@ Link {
   border-bottom: 1px solid #292626;
 }
 
+.ecampus {
+  text-decoration: none;
+  color: rgb(6, 125, 233);
+}
+
 @media (max-width: 768px) {
   .upperNav {
     min-height: 50px;
@@ -678,8 +683,16 @@ Link {
   font-size: 13.33px;
 }
 
-.downBtn {
+.courseBtn {
   background: rgb(6, 125, 233);
+}
+
+.courseBtn:active {
+  background: #292626;
+}
+
+.courseBtn:focus {
+  background: #353131;
 }
 
 .allCourses,
