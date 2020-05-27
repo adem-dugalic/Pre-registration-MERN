@@ -64,12 +64,13 @@ export default class Login extends Component {
         }
       })
       .catch((err) => {
+        
         Cookie.remove("token");
         Cookie.remove("userId");
 
         alert("Error: " + err);
         //Return to the user list
-        window.location = "/";
+        //window.location = "/";
       });
   }
 

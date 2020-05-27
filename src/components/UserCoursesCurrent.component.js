@@ -10,7 +10,6 @@ export default class UserCoursesCurrect extends Component {
 
     this.updateTable = this.updateTable.bind(this);
     //this.onChangeCourses = this.onChangeCourses.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
     this.onDelete = this.onDelete.bind(this);
 
     this.state = {
@@ -27,64 +26,29 @@ export default class UserCoursesCurrect extends Component {
   }
 
   async updateTable() {
-    const userId = this.state.userId;
-    console.log(this.state.userId);
-    axios
-      .get(
-        "http://localhost:5000/users/userCourse?token=" +
-          Cookie.get("token") +
-          "&userId=" +
-          Cookie.get("userId"),
-        userId
-        //userIDDD
-      )
-      .then((res) => {
-        this.setState({
-          data: res,
-        });
-      })
-      .catch((err) => alert("Error: " + err));
 
-    console.log(this.state.data);
-
-    /*     const response = await fetch(
-      "http://localhost:5000/users/getUserCourse?token=" +
-        Cookie.get("token") +
-        "&userId=" +
-        Cookie.get("userId")
-    );
-    const res = await response.json();
-
-    this.setState({
-      data: res.array,
-    }); */
+    axios.get("http://localhost:5000/users/userCourse?token=" + Cookie.get("token") + "&userId=" +  Cookie.get("userId"))
+        .then((res) => {
+          this.setState({
+            data: res.data[0].information,
+          });
+        })
+        .catch((err) => alert("Error: " + err));
   }
 
   onDelete(e) {
-    this.setState({
-      course: e.target.value,
-    });
+    console.log("Deleting courseId: " + e);
+    axios.post("http://localhost:5000/users/removeCourse?courseId=" + e +"&token=" + Cookie.get("token") + "&userId=" +  Cookie.get("userId"))
+        .then((res) => {
+          console.log(res);
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.log("Error during deletion... see console " + err);
+        })
   }
 
-  onSubmit(e) {
-    e.preventDefault();
-    const added = {
-      userId: Cookie.get("userId"),
-      courses: this.state.courses,
-    };
-    axios
-      .post(
-        "http://localhost:5000/users/setUserCourses?token=" +
-          Cookie.get("token") +
-          "&userId=" +
-          Cookie.get("userId"),
-        added
-      )
-      .then((res) => {
-        console.log("Success");
-      })
-      .catch((err) => alert("Error: " + err));
-  }
+
 
   render() {
     return (
@@ -120,7 +84,7 @@ export default class UserCoursesCurrect extends Component {
           <table className="semester">
             <thead>
               <tr>
-                <th className="semesterNum" colSpan="5">
+                <th className="semesterNum" colSpan="6">
                   Taken Courses
                 </th>
               </tr>
@@ -132,6 +96,7 @@ export default class UserCoursesCurrect extends Component {
                 <td>Pofessor</td>
                 <td>Academic Unit</td>
                 <td>Pre req</td>
+                <td>Options</td>
               </tr>
               {Array.isArray(this.state.data) &&
                 this.state.data.map((item, i) => {
@@ -152,7 +117,7 @@ export default class UserCoursesCurrect extends Component {
                       </td>
                       <td>
                         <div className="button">
-                          <button onClick={() => this.onDelete(item.course_id)}>
+                          <button onClick={() => this.onDelete(item._id)}>
                             Remove Course
                           </button>
                         </div>
