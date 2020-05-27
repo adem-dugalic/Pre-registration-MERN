@@ -11,7 +11,7 @@ const app = express();
 //Parse the cookies
 app.use(cookieParser());
 
-const port = process.env.PORT ||5000;
+const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());

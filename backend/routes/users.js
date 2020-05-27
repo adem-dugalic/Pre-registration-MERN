@@ -4,6 +4,7 @@ const router = require('express').Router();
 const User = require('../models/User.model');
 const UserSession = require('../models/UserSession.model');
 const UserCourses = require('../models/UserCourses.model');
+const Course = require('../models/Course.model');
 
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
@@ -22,33 +23,6 @@ router.route('/').get(auth,(req,res)=> {
                 .catch((err) =>  res.status(400).json('Error: ' + err));
         })
         .catch(err => res.status(400).json('Error: ' + err));
-});
-
-router.route('/userImport').post((req, res) => {
-
-    const user = new User({
-        userID: req.body.userID,
-        name: req.body.name,
-        surname: req.body.surname,
-        faculty: req.body.faculty,
-        program: req.body.program,
-        semester: req.body.semester,
-        email: req.body.email,
-    });
-
-    user.save().then(
-        () => {
-            res.status(201).json({
-                message: 'User added successfully!'
-            });
-        }
-    ).catch(
-        (error) => {
-            res.status(500).json({
-                error: error
-            });
-        }
-    );
 });
 
 router.route('/signup').post((req, res) => {
@@ -167,33 +141,91 @@ router.route('/auth').get(auth,(req, res) => {
     res.status(200).json("True");
 });
 
-router.route('/getUserCourses').get((req,res) => {
-    console.log(req.body.userId || req.query.userId);
-    //find user and all his/hers courses
-    UserCourses.find({userId:req.body.userId})
-    .then(courses => res.json(courses))
-    .catch((err) => res.status(400).json('Error: ' + err));
+router.route('/getUserCourse').get((req, res) => {
+    const userId = req.cookies['userId'] || req.body.userId;
+
+    UserCourses.aggregate([
+        {
+            $match: {userId:userId}
+        },
+        {
+            $project: {
+                courses: {
+                    $map: {
+                        input: "$courses",
+                        as: "item1",
+                        in: {
+                            $toObjectId: "$$item1"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            '$lookup': {
+                'from': "courses",
+                'localField': "courses",
+                'foreignField': "_id",
+                'as': "information"
+            }
+        },
+        {
+            $project: {
+                information:1,
+                courses:1,
+            }
+        }
+    ])
+        .exec((err, result)=>{
+            if (err) {
+                res.status(500).json(err);
+            }
+            if (result) {
+
+                if(result.length===0)
+                    res.status(400).json("Error: can't found data");
+                else
+                    res.status(200).json(result);
+            }
+        });
 });
 
-router.route('/setUserCourses').post(auth,(req,res)=> {
+router.route('/setUserCourse').post((req,res)=> {
     console.log(req.body.userId || req.query.userId);
+
+    const userId = req.cookies['userId'] || req.body.userId;
+    const courseId = req.body.courseId;
+    if(!courseId)
+    {
+        res.json("Error.");
+    }
+    else if(courseId != UserCourses.find)
+
     //add to the user a course
-    UserCourses.replaceOne({userId:req.body.userId},{userId:req.body.userId, courses:req.body.courses},{ upsert: true })
+    UserCourses.updateOne({userId:userId.trim()},{userId:userId, $push: {courses:courseId}},{ upsert: true })
         .then(() => {
-            res.json("Added!");
+            res.json("userCourse updated");
         })
         .catch((err) => res.status(401).json('Error: ' + err));
 });
 
-router.route('/delete').delete((req, res) => {
-    User.findOneAndDelete({name:req.body.name})
-    .then(() => {
-        res.status(200).json("Done!");
-    })
-    .catch((err) => {
-        res.status(400).json('Error: ' + err);
-    })
-});
+router.route('/deleteUserCourse').post((req,res)=> {
+    console.log(req.body.userId || req.query.userId);
+
+    const userId = req.cookies['userId'] || req.body.userId;
+    const courseId = req.body.courseId;
+    if(!courseId)
+    {
+        res.json("Error.");
+    }
+
+    UserCourses.updateOne({userId:userId.trim()},{userId:userId, $pull: {courses:courseId}},{ upsert: true })
+        .then(() => {
+            res.json("Removed");
+        })
+        .catch((err) => res.status(401).json('Error: ' + err));
+})
+
 //TODO: do update / edit / push / delete
 
 /*
