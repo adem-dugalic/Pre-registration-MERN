@@ -6,6 +6,7 @@ import Cookie from "js-cookie";
 import "../css/style.css";
 import "../css/main.css";
 import "../css/util.css";
+import "../fonts/iconic/css/material-design-iconic-font.min.css";
 
 export default class Login extends Component {
   constructor(props) {
@@ -19,6 +20,7 @@ export default class Login extends Component {
     this.state = {
       userID: "",
       password: "",
+      isAdmin: false,
     };
   }
 
@@ -49,16 +51,26 @@ export default class Login extends Component {
         Cookie.set("userId", res.data.userId);
         Cookie.set("name", res.data.name);
         Cookie.set("surname", res.data.surname);
-        //Return to the user list
-        window.location = "/Home";
+
+        this.setState({
+          isAdmin: res.data.isAdmin,
+        });
+        if (this.state.isAdmin) {
+          //needs testing
+          window.location = "/AdminHome";
+        } else {
+          //Return to the user list
+          window.location = "/Home";
+        }
       })
       .catch((err) => {
+        
         Cookie.remove("token");
         Cookie.remove("userId");
 
         alert("Error: " + err);
         //Return to the user list
-        window.location = "/";
+        //window.location = "/";
       });
   }
 

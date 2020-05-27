@@ -7,6 +7,7 @@ import Login from "./components/Login.component";
 import SignUp from "./components/SignUp.component";
 import Courses from "./components/Courses.component";
 import UserCourses from "./components/UserCourses.component";
+import UserCoursesCurrent from "./components/UserCoursesCurrent.component";
 import Home from "./components/Home.component";
 import Schedule from "./components/Schedule.component";
 
@@ -21,27 +22,31 @@ function App() {
     <div className="outerWrapper">
       <Switch>
         <Route exact path="/">
-          <Route component={Login} />
+          <Login />
         </Route>
         <Route exact path="/SignUp">
-          <Route component={SignUp} />
+          <SignUp />
         </Route>
         <div className="wrapper">
           <Route exact path="/Home">
             <Navigation />
-            <Route exact component={Home} />
+            <Home />
           </Route>
           <Route exact path="/Courses">
             <Navigation />
-            <Route component={Courses} />
+            <Courses />
           </Route>
           <Route exact path="/UserCourses">
             <Navigation />
-            <Route component={UserCourses} />
+            <UserCourses />
+          </Route>
+          <Route exact path="/UserCoursesCurrent">
+            <Navigation />
+            <UserCoursesCurrent />
           </Route>
           <Route exact path="/Schedule">
             <Navigation />
-            <Route component={Schedule} />
+            <Schedule />
           </Route>
 
           <Route exact path="/AdminHome">

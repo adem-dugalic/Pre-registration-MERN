@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import "../css/style.css";
 import "../css/main.css";
 import "../css/util.css";
+import "../fonts/iconic/css/material-design-iconic-font.min.css";
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -62,7 +63,7 @@ export default class SignUp extends Component {
       })
       .catch((err) => alert("Error: " + err));
 
-    window.location = "/";
+    //window.location = "/"; don't refresh the page before the request is finish....
   }
 
   render() {

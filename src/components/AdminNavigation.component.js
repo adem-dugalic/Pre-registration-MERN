@@ -12,8 +12,52 @@ const btnStyle = {
 export default class AdminNavigation extends Component {
   constructor(props) {
     super(props);
+
+    this.logout = this.logout.bind(this);
+
+    this.state = {
+      isLogin: false,
+      fullName: "",
+    };
   }
 
+  async componentDidMount() {
+    /*Check if the user is properly authenticated*/
+    if (!Cookie.get("token")) {
+      window.location = "/";
+    }
+
+    const response = await fetch(
+      "http://localhost:5000/users/auth?token=" +
+        Cookie.get("token") +
+        "&userId=" +
+        Cookie.get("userId")
+    );
+    this.setState({
+      fullName: Cookie.get("name") + " " + Cookie.get("surname"),
+    });
+  }
+
+  logout() {
+    axios
+      .get(
+        "http://localhost:5000/users/logout?token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId")
+      )
+      .then((res) => {
+        Cookie.remove("token");
+        Cookie.remove("userId");
+        window.location = "/";
+      })
+      .catch((err) => {
+        /*alert("Error: " + err);*/ //Very strange beacause we considere it has an error but it is not...
+        Cookie.remove("token");
+        Cookie.remove("userId");
+        window.location = "/";
+      });
+  }
   render() {
     return (
       <nav className="navigation">
@@ -39,9 +83,11 @@ export default class AdminNavigation extends Component {
         </div>
         <div className="downButtons">
           <div className="links">
-            <Link id="LogOut" to="/Login">
-              <span data-hover="LogOut">Log Out</span>
-            </Link>
+            <form className="LogOut">
+              <button onClick={this.logout} data-hover="LogOut">
+                Log Out
+              </button>
+            </form>
           </div>
         </div>
       </nav>

@@ -5,10 +5,6 @@ import Logo from "../img/IUSlogo2.png";
 import Cookie from "js-cookie";
 import axios from "axios";
 
-const btnStyle = {
-  margin: "5px",
-};
-
 export default class Navigation extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +18,11 @@ export default class Navigation extends Component {
   }
 
   async componentDidMount() {
+    /*Check if the user is properly authenticated*/
+    if (!Cookie.get("token")) {
+      window.location = "/";
+    }
+
     const response = await fetch(
       "http://localhost:5000/users/auth?token=" +
         Cookie.get("token") +
@@ -82,13 +83,11 @@ export default class Navigation extends Component {
         </div>
         <div className="downButtons">
           <div className="links">
-            <Link id="LogOut" to="/Login">
-              <form>
-                <button onClick={this.logout} data-hover="LogOut">
-                  Log Out
-                </button>
-              </form>
-            </Link>
+            <form className="LogOut">
+              <button onClick={this.logout} data-hover="LogOut">
+                Log Out
+              </button>
+            </form>
           </div>
         </div>
       </nav>
