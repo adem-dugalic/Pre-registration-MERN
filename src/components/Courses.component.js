@@ -13,13 +13,15 @@ export default class Courses extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onAddItem = this.onAddItem.bind(this);
     //this.changeLooks = this.changeLooks.bind(this);
+    this.onSearch = this.onSearch.bind(this);
 
     this.state = {
       data: [],
       page: 1,
-      courses: [],
+      courseId: [],
       //course: "",
       userId: "",
+      courseID: "",
     };
   }
 
@@ -49,10 +51,12 @@ export default class Courses extends Component {
   }; */
 
   onAddItem(course) {
+    console.log("onAddItem stuff");
+    console.log(course);
     this.setState((state) => {
-      const courses = [...state.courses, course];
+      const courseId = [...state.courseId, course];
       return {
-        courses,
+        courseId,
       };
     });
   }
@@ -62,14 +66,36 @@ export default class Courses extends Component {
   } */
 
   onSubmit(e) {
+    console.log("onSubmit stuff");
+    console.log(this.state.courseId);
     e.preventDefault();
     const added = {
       userId: Cookie.get("userId"),
-      courses: this.state.courses,
+      courseId: this.state.courseId,
+    };
+    console.log(added); //ovde
+    axios
+      .post(
+        "http://localhost:5000/users/addCourse?token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId"),
+        added
+      )
+      .then((res) => {
+        console.log("Success");
+      })
+      .catch((err) => alert("Error: " + err));
+  }
+  // Search impelmentation
+  onSearch(e) {
+    e.preventDefault();
+    const added = {
+      coursID: this.state.courseID,
     };
     axios
       .post(
-        "http://localhost:5000/users/setUserCourses?token=" +
+        "http://localhost:5000/courses/search?token=" +
           Cookie.get("token") +
           "&userId=" +
           Cookie.get("userId"),
@@ -150,15 +176,13 @@ export default class Courses extends Component {
                       </td>
                       <td>
                         <div className="button">
-                          <button
-                            className="downBtn"
+                          <input
+                            type="checkbox"
                             onClick={
-                              () => this.onAddItem(item.course_id)
+                              () => this.onAddItem(item._id)
                               //this.changeLooks()
                             }
-                          >
-                            Add Course
-                          </button>
+                          ></input>
                         </div>
                       </td>
                     </tr>

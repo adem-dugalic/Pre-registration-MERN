@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import Cookie from "js-cookie";
 import { Link } from "react-router-dom";
+import Magnifier from "../img/magnifier.png";
 
 export default class UserCoursesCurrect extends Component {
   constructor(props) {
@@ -15,7 +16,7 @@ export default class UserCoursesCurrect extends Component {
     this.state = {
       data: [],
       course: "",
-      userId: "",
+      userId: Cookie.get("userId"),
     };
   }
 
@@ -26,17 +27,37 @@ export default class UserCoursesCurrect extends Component {
   }
 
   async updateTable() {
+    const userId = this.state.userId;
+    console.log(this.state.userId);
     axios
       .get(
-        "http://localhost:5000/users/getUserCourses?token=" +
+        "http://localhost:5000/users/userCourse?token=" +
           Cookie.get("token") +
           "&userId=" +
-          Cookie.get("userId")
+          Cookie.get("userId"),
+        userId
+        //userIDDD
       )
       .then((res) => {
-        const data = res.data;
-        this.setState({ data });
-      });
+        this.setState({
+          data: res,
+        });
+      })
+      .catch((err) => alert("Error: " + err));
+
+    console.log(this.state.data);
+
+    /*     const response = await fetch(
+      "http://localhost:5000/users/getUserCourse?token=" +
+        Cookie.get("token") +
+        "&userId=" +
+        Cookie.get("userId")
+    );
+    const res = await response.json();
+
+    this.setState({
+      data: res.array,
+    }); */
   }
 
   onDelete(e) {
@@ -79,7 +100,7 @@ export default class UserCoursesCurrect extends Component {
               <input type="search" name="search" placeholder="Search" />
             </form>
             <button className="magnifier">
-              <img src="../img/magnifier.png" class="manifierImg" />
+              <img src={Magnifier} className="manifierImg" />
             </button>
           </div>
           <div className="prevNext">
@@ -112,32 +133,33 @@ export default class UserCoursesCurrect extends Component {
                 <td>Academic Unit</td>
                 <td>Pre req</td>
               </tr>
-              {this.state.data.map((item, i) => {
-                return (
-                  <tr key={i}>
-                    <td className="title">{item.course_id}</td>
-                    <td>
-                      <a href={"https://ecampus.ius.edu.ba/" + item.Url}>
-                        {item.course_name}
-                      </a>
-                    </td>
-                    <td>{item.Lecturer}</td>
-                    <td>{item.AcademicUnit}</td>
-                    <td>
-                      {item.prerequisite.map((item) => {
-                        return item + " ";
-                      })}
-                    </td>
-                    <td>
-                      <div className="button">
-                        <button onClick={() => this.onDelete(item.course_id)}>
-                          Remove Course
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+              {Array.isArray(this.state.data) &&
+                this.state.data.map((item, i) => {
+                  return (
+                    <tr key={i}>
+                      <td className="title">{item.course_id}</td>
+                      <td>
+                        <a href={"https://ecampus.ius.edu.ba/" + item.Url}>
+                          {item.course_name}
+                        </a>
+                      </td>
+                      <td>{item.Lecturer}</td>
+                      <td>{item.AcademicUnit}</td>
+                      <td>
+                        {item.prerequisite.map((item) => {
+                          return item + " ";
+                        })}
+                      </td>
+                      <td>
+                        <div className="button">
+                          <button onClick={() => this.onDelete(item.course_id)}>
+                            Remove Course
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>

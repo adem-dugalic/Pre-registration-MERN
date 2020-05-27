@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import Cookie from "js-cookie";
 import { Link } from "react-router-dom";
+import Magnifier from "../img/magnifier.png";
 
 export default class UserCourses extends Component {
   constructor(props) {
@@ -93,7 +94,7 @@ export default class UserCourses extends Component {
               <input type="search" name="search" placeholder="Search" />
             </form>
             <button class="magnifier">
-              <img src="../img/magnifier.png" class="manifierImg" />
+              <img src={Magnifier} className="manifierImg" />
             </button>
           </div>
           <div class="prevNext">
