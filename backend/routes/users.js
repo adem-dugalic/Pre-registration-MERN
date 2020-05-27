@@ -23,31 +23,6 @@ router.route("/").get(auth, (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/userImport").post((req, res) => {
-  const user = new User({
-    userID: req.body.userID,
-    name: req.body.name,
-    surname: req.body.surname,
-    faculty: req.body.faculty,
-    program: req.body.program,
-    semester: req.body.semester,
-    email: req.body.email,
-  });
-
-  user
-    .save()
-    .then(() => {
-      res.status(201).json({
-        message: "User added successfully!",
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        error: error,
-      });
-    });
-});
-
 router.route("/signup").post((req, res) => {
   User.findOne({ userID: req.body.userID }).then((user) => {
     if (!user) {
