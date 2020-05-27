@@ -38,7 +38,8 @@ router.route("/delete").post((req, res) => {
     });
 });
 
-/*This is an example of function to give data to client (slowly) for example for big operation
+/*This is an example of function
+ to give data to client (slowly) for example for big operation
  * where we want to inform the client the progress we could use it*/
 router.route("/write").get((req, res) => {
   write(res).then(() => {
