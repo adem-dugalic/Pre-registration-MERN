@@ -4,6 +4,7 @@ import "../css/style.css";
 import Logo from "../img/IUSlogo2.png";
 import Cookie from "js-cookie";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 const btnStyle = {
   margin: "5px",
@@ -18,6 +19,7 @@ export default class AdminNavigation extends Component {
     this.state = {
       isLogin: false,
       fullName: "",
+      redirect: null,
     };
   }
 
@@ -38,7 +40,8 @@ export default class AdminNavigation extends Component {
     });
   }
 
-  logout() {
+  logout(e) {
+    e.preventDefault();
     axios
       .get(
         "http://localhost:5000/users/logout?token=" +
@@ -49,16 +52,21 @@ export default class AdminNavigation extends Component {
       .then((res) => {
         Cookie.remove("token");
         Cookie.remove("userId");
-        window.location = "/";
+        this.setState({
+          redirect: "/",
+        });
       })
       .catch((err) => {
         /*alert("Error: " + err);*/ //Very strange beacause we considere it has an error but it is not...
         Cookie.remove("token");
         Cookie.remove("userId");
-        window.location = "/";
+        console.log("didnt log out");
       });
   }
   render() {
+    if (this.state.redirect) {
+      return <Redirect to={this.state.redirect} />;
+    }
     return (
       <nav className="navigation">
         <div className="logo">

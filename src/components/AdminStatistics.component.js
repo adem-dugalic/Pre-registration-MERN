@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import Cookie from "js-cookie";
 import "../css/style.css";
+import { Link } from "react-router-dom";
+import Magnifier from "../img/magnifier.png";
 
 export default class AdminStatistics extends Component {
   constructor(props) {
@@ -22,7 +24,7 @@ export default class AdminStatistics extends Component {
               <input type="search" name="search" placeholder="Search" />
             </form>
             <button class="magnifier">
-              <img src="../img/magnifier.png" class="manifierImg" />
+              <img src={Magnifier} className="manifierImg" />
             </button>
           </div>
           <div class="prevNext"></div>
@@ -36,6 +38,15 @@ export default class AdminStatistics extends Component {
         </div>
         <div class="Statistics">
           <div class="cards">
+            <Link to="/AdminStatisticsEx">
+              <div class="courseCard">
+                <span class="cardId">CS308</span>
+                <span class="cardName" id="Border">
+                  Software Engineering
+                </span>
+                <span class="cardProfessor">Kanita Hadžiabdić</span>
+              </div>
+            </Link>
             <div class="courseCard">
               <span class="cardId">CS308</span>
               <span class="cardName" id="Border">

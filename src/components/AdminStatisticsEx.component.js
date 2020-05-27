@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import axios from "axios";
-import { Card } from "react-bootstrap";
-import Cookie from "js-cookie";
 import "../css/style.css";
+import Magnifier from "../img/magnifier.png";
 
 export default class AdminStatisticsEx extends Component {
   constructor(props) {
@@ -23,7 +21,7 @@ export default class AdminStatisticsEx extends Component {
               <input type="search" name="search" placeholder="Search" />
             </form>
             <button class="magnifier">
-              <img src="../img/magnifier.png" class="manifierImg" />
+              <img src={Magnifier} className="manifierImg" />
             </button>
           </div>
           <div class="prevNext"></div>

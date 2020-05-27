@@ -211,12 +211,15 @@ export default class Courses extends Component {
                     </td>
                     <td>
                       <div className="button">
-                        <button
-                          className="courseBtn"
-                          onClick={() => this.onAddItem(item._id)}
-                        >
-                          Add Course
-                        </button>
+                        <form>
+                          <button
+                            id="work"
+                            className="courseBtn"
+                            onClick={() => this.onAddItem(item._id)}
+                          >
+                            Add Course
+                          </button>
+                        </form>
                       </div>
                     </td>
                   </tr>

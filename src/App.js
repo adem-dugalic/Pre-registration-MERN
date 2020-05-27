@@ -15,6 +15,7 @@ import AdminHome from "./components/AdminHome.component";
 import AdminCourses from "./components/AdminCourses.component";
 import AdminStudents from "./components/AdminStudents.component";
 import AdminStatistics from "./components/AdminStatistics.component";
+import AdminStatisticsEx from "./components/AdminStatisticsEx.component";
 import AdminNavigation from "./components/AdminNavigation.component";
 
 function App() {
@@ -64,6 +65,10 @@ function App() {
           <Route exact path="/AdminStatistics">
             <AdminNavigation />
             <AdminStatistics />
+          </Route>
+          <Route exact path="/AdminStatisticsEx">
+            <AdminNavigation />
+            <AdminStatisticsEx />
           </Route>
         </div>
       </Switch>

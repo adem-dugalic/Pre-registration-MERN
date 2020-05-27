@@ -115,7 +115,10 @@ export default class UserCoursesCurrect extends Component {
                     <tr key={i}>
                       <td className="title">{item.course_id}</td>
                       <td>
-                        <a href={"https://ecampus.ius.edu.ba/" + item.Url}>
+                        <a
+                          className="ecampus"
+                          href={"https://ecampus.ius.edu.ba/" + item.Url}
+                        >
                           {item.course_name}
                         </a>
                       </td>

@@ -1,11 +1,134 @@
 import React, { Component } from "react";
 import "../css/style.css";
+import axios from "axios";
 import Cookie from "js-cookie";
+import Magnifier from "../img/magnifier.png";
 
-export default class AdminCourses extends Component {
+export default class Courses extends Component {
   constructor(props) {
     super(props);
+
+    this.updateTable = this.updateTable.bind(this);
+    //this.onChangeCourses = this.onChangeCourses.bind(this);
+
+    this.onAddItem = this.onAddItem.bind(this);
+    //this.changeLooks = this.changeLooks.bind(this);
+    this.onSearch = this.onSearch.bind(this);
+    this.getCurrentUserCourse = this.getCurrentUserCourse.bind(this);
+
+    this.state = {
+      default: [], //We save the course to avoid to requery them each time.
+      userCourse: [],
+      data: [],
+      page: 1,
+      courseId: [],
+      //course: "",
+      userId: "",
+      courseID: "",
+
+      //search
+      search: "",
+    };
   }
+
+  //Right before anything load the page this is called
+  async componentDidMount() {
+    this.getCurrentUserCourse();
+    await this.updateTable();
+  }
+
+  getCurrentUserCourse() {
+    axios
+      .get(
+        "http://localhost:5000/users/userCourse?token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId")
+      )
+      .then((res) => {
+        this.setState({
+          userCourse: res.data[0].courses,
+        });
+      })
+      .catch((err) => alert("Error: " + err));
+  }
+
+  async updateTable() {
+    const response = await fetch(
+      "http://localhost:5000/courses?page=" +
+        this.state.page +
+        "&token=" +
+        Cookie.get("token") +
+        "&userId=" +
+        Cookie.get("userId")
+    );
+    const res = await response.json();
+
+    this.setState({
+      data: res.array,
+      default: res.array,
+    });
+  }
+
+  /*  onChangeCourse = (event) => {
+    this.setState({ course: event.target.value });
+  }; */
+
+  async onAddItem(course) {
+    console.log("onAddItem stuff");
+    console.log(course);
+    axios
+      .post(
+        "http://localhost:5000/users/addCourse?token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId"),
+        { courseId: course }
+      )
+      .then((res) => {
+        console.log("Success");
+      })
+      .catch((err) => alert("Error: " + err));
+  }
+
+  // Search impelmentation
+  onSearch(e) {
+    e.preventDefault();
+    this.setState({
+      search: e.target.value,
+    });
+    console.log(e.target.value);
+
+    if (e.target.value === 0) {
+      this.setState({
+        data: this.state.default,
+      });
+      return;
+    } else if (e.target.value.length < 3) return;
+
+    axios
+      .get(
+        "http://localhost:5000/courses/search?value=" +
+          e.target.value +
+          "&token=" +
+          Cookie.get("token") +
+          "&userId=" +
+          Cookie.get("userId")
+      )
+      .then((res) => {
+        console.log(res.data);
+
+        this.setState({ data: res.data });
+      })
+      .catch((err) => {
+        alert("Error: " + err);
+      });
+  }
+
+  /*  changeLooks(e) {
+    var btn = document.querySelector(".downBtn");
+    btn.style.background = "#292626";
+  } */
 
   render() {
     return (
@@ -18,10 +141,16 @@ export default class AdminCourses extends Component {
         <div className="upperNav">
           <div className="search">
             <form className="searchForm">
-              <input type="search" name="search" placeholder="Search" />
+              <input
+                type="search"
+                name="search"
+                placeholder="Search"
+                onChange={this.onSearch}
+                value={this.state.search}
+              />
             </form>
             <button className="magnifier">
-              <img src="../img/magnifier.png" className="manifierImg" />
+              <img src={Magnifier} className="manifierImg" />
             </button>
           </div>
           <div className="prevNext"></div>
@@ -45,176 +174,61 @@ export default class AdminCourses extends Component {
                 <td>Delete</td>
                 <td>Edit</td>
               </tr>
-              <tr>
-                <td className="title">CS103</td>
-                <td>Introduction to Programming</td>
-                <td>3 | 6</td>
-                <td>Džejla Međedović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">ELIT100</td>
-                <td>Academic English and Effective Communication</td>
-                <td>3 | 6</td>
-                <td>Elmedin Zubović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">MATH101</td>
-                <td>Calculus I</td>
-                <td>3 | 6</td>
-                <td>Lejla Miller</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">NS112</td>
-                <td>Understanding Science and Technology</td>
-                <td>1.5 | 3</td>
-                <td>Asif Šabanović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">PSY103</td>
-                <td>Introduction to Psychology</td>
-                <td>3 | 6</td>
-                <td>Bojan Šošić</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">TURK111</td>
-                <td>Spoken Turkish I</td>
-                <td>1.5 | 3</td>
-                <td>Minela Sinanović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">MATH201</td>
-                <td>Linear Algebra</td>
-                <td>3 | 6</td>
-                <td>Mehmet Can</td>
-                <td>MATH101</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">PSY103</td>
-                <td>Introduction to Psychology</td>
-                <td>3 | 6</td>
-                <td>Bojan Šošić</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">TURK111</td>
-                <td>Spoken Turkish I</td>
-                <td>1.5 | 3</td>
-                <td>Minela Sinanović</td>
-                <td>None</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="title">MATH201</td>
-                <td>Linear Algebra</td>
-                <td>3 | 6</td>
-                <td>Mehmet Can</td>
-                <td>MATH101</td>
-                <td>
-                  <div className="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div className="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
+              {this.state.data.map((item, i) => {
+                return (
+                  <tr
+                    key={i}
+                    style={
+                      this.state.userCourse.includes(item._id) > 0
+                        ? { display: "none" }
+                        : { background: "#353131" }
+                    }
+                  >
+                    <td className="title">{item.course_id}</td>
+                    <td>
+                      <a
+                        className="ecampus"
+                        href={"https://ecampus.ius.edu.ba/" + item.Url}
+                      >
+                        {item.course_name}
+                      </a>
+                    </td>
+                    <td>{item.Lecturer}</td>
+                    <td>{item.AcademicUnit}</td>
+                    <td>
+                      {item.prerequisite.map((item) => {
+                        return item + " ";
+                      })}
+                    </td>
+                    <td>
+                      <div className="button">
+                        <form>
+                          <button
+                            id="work"
+                            className="courseBtn"
+                            onClick={() => this.onAddItem(item._id)}
+                          >
+                            Delete
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="button">
+                        <form>
+                          <button
+                            id="work"
+                            className="courseBtn"
+                            onClick={() => this.onAddItem(item._id)}
+                          >
+                            Edit
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -3,10 +3,47 @@ import axios from "axios";
 import { Card } from "react-bootstrap";
 import Cookie from "js-cookie";
 import "../css/style.css";
+import Magnifier from "../img/magnifier.png";
 
 export default class AdminStudents extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      data: [],
+      userId: "",
+      course: "",
+      registered: "false",
+      userId: Cookie.get("userId"),
+    };
+  }
+
+  async componentDidMount() {
+    await this.updateTable();
+  }
+
+  async updateTable() {
+    axios
+      .get("http://localhost:5000/debug/users")
+      .then((res) => {
+        this.setState({
+          data: res.data,
+        });
+        console.log(this.state.data);
+      })
+      .catch((err) => alert("Error: " + err));
+  }
+
+  onDelete(_id) {
+    console.log("Deleting tarik: " + _id);
+    axios
+      .post("http://localhost:5000/debug/delete", { _id: _id })
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log("Error during deletion... see console " + err);
+      });
   }
 
   render() {
@@ -23,7 +60,7 @@ export default class AdminStudents extends Component {
               <input type="search" name="search" placeholder="Search" />
             </form>
             <button class="magnifier">
-              <img src="../img/magnifier.png" class="manifierImg" />
+              <img src={Magnifier} className="manifierImg" />
             </button>
           </div>
           <div class="prevNext"></div>
@@ -41,91 +78,46 @@ export default class AdminStudents extends Component {
               <tr class="info">
                 <td>ID</td>
                 <td>Student Name</td>
-                <td>Faculty</td>
                 <td>Program</td>
+                <td>Semester</td>
+                <td>Registered</td>
                 <td>Delete</td>
                 <td>Edit</td>
               </tr>
-              <tr>
-                <td class="title">170302071</td>
-                <td>Adem Dugalić</td>
-                <td>FENS</td>
-                <td>CSE</td>
-                <td>
-                  <div class="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div class="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="title">#######</td>
-                <td>Axel Stefanini</td>
-                <td>FENS</td>
-                <td>CSE</td>
-                <td>
-                  <div class="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div class="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="title">170302###</td>
-                <td>Lejla Mujakić</td>
-                <td>FENS</td>
-                <td>SE</td>
-                <td>
-                  <div class="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div class="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="title">170302022</td>
-                <td>Tarik Muharem</td>
-                <td>FENS</td>
-                <td>SE</td>
-                <td>
-                  <div class="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div class="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="title">170302###</td>
-                <td>Zinedin Hadžajlija</td>
-                <td>FENS</td>
-                <td>SE</td>
-                <td>
-                  <div class="button">
-                    <button>Delete</button>
-                  </div>
-                </td>
-                <td>
-                  <div class="button">
-                    <button>Edit</button>
-                  </div>
-                </td>
-              </tr>
+              {Array.isArray(this.state.data) &&
+                this.state.data.map((item, i) => {
+                  if (!item.isAdmin) {
+                    if (item.password) {
+                      this.state.registered = "true";
+                    }
+                    return (
+                      <tr key={i}>
+                        <td className="title">{item.userID}</td>
+                        <td>
+                          {item.name} {item.surname}
+                        </td>
+                        <td>{item.faculty}</td>
+                        <td>{item.semester}</td>
+                        <td>{this.state.registered}</td>
+                        <td>
+                          <div className="button">
+                            <button
+                              onClick={() => this.onDelete(item._id)}
+                              className="courseBtn"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="button">
+                            <button className="courseBtn">Edit</button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  }
+                })}
             </tbody>
           </table>
         </div>
