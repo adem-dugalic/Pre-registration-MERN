@@ -691,7 +691,8 @@ Link {
   background: #292626;
 }
 
-.courseBtn:focus {
+.courseBtn:focus,
+.courseBtn:visited {
   background: #353131;
 }
 

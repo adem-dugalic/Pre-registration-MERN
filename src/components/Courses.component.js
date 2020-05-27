@@ -75,7 +75,6 @@ export default class Courses extends Component {
   }; */
 
   async onAddItem(course) {
-    course.preventDefault();
     console.log("onAddItem stuff");
     console.log(course);
     axios
@@ -172,7 +171,7 @@ export default class Courses extends Component {
           <table className="courses">
             <tbody>
               <tr>
-                <th class="semesterNum" colspan="6">
+                <th className="semesterNum" colspan="6">
                   All courses
                 </th>
               </tr>

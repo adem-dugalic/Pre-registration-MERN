@@ -128,7 +128,10 @@ export default class UserCoursesCurrect extends Component {
                       </td>
                       <td>
                         <div className="button">
-                          <button onClick={() => this.onDelete(item._id)}>
+                          <button
+                            className="courseBtn"
+                            onClick={() => this.onDelete(item._id)}
+                          >
                             Remove Course
                           </button>
                         </div>
