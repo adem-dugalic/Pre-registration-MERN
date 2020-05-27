@@ -142,6 +142,7 @@ router.route("/logout").get(auth, (req, res) => {
   UserSession.findOneAndDelete({ userId: userId })
     .then(() => {
       res.status(200).json("Done!");
+      console.log(userId);
     })
     .catch((err) => {
       res.status(400).json("Error: " + err);
